@@ -1,329 +1,619 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Resume",
-  "description": "Schema for a resume",
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
     "personal_information": {
       "type": "object",
-      "description": "Personal details of the candidate",
       "properties": {
         "name": {
-          "type": "string",
-          "description": "Full name of the candidate"
+          "type": "string"
         },
         "email": {
-          "type": "string",
-          "format": "email",
-          "description": "Email address of the candidate"
+          "type": "string"
         },
         "phone": {
-          "type": "string",
-          "description": "Phone number of the candidate"
+          "type": "string"
         },
         "location": {
-          "type": "string",
-          "description": "Current location of the candidate"
+          "type": "string"
         },
         "linkedin": {
-          "type": "string",
-          "format": "url",
-          "description": "LinkedIn profile URL"
+          "type": "string"
         },
         "github": {
-          "type": "string",
-          "format": "url",
-          "description": "GitHub profile URL"
+          "type": "string"
         },
         "portfolio": {
-          "type": "string",
-          "format": "url",
-          "description": "Personal portfolio URL"
+          "type": "string"
         }
       },
       "required": [
         "name",
         "email",
-        "phone"
+        "phone",
+        "location",
+        "linkedin",
+        "github",
+        "portfolio"
       ]
     },
     "summary": {
-      "type": "string",
-      "description": "Brief summary or objective of the candidate"
+      "type": "string"
     },
     "experience": {
       "type": "array",
-      "description": "List of work experiences",
-      "items": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "Job title"
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "company": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "start_date": {
+              "type": "string"
+            },
+            "end_date": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "points": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "additionalItems": true
+            }
           },
-          "company": {
-            "type": "string",
-            "description": "Company name"
-          },
-          "location": {
-            "type": "string",
-            "description": "Location of the company"
-          },
-          "start_date": {
-            "type": "string",
-            "format": "date",
-            "description": "Start date of the job (YYYY-MM-DD)"
-          },
-          "end_date": {
-            "type": "string",
-            "format": "date",
-            "description": "End date of the job (YYYY-MM-DD). Use 'Present' if currently employed."
-          },
-          "description": {
-            "type": "string",
-            "description": "Description of the job responsibilities and achievements"
-          }
+          "required": [
+            "title",
+            "company",
+            "location",
+            "start_date"
+          ]
         },
-        "required": [
-          "title",
-          "company",
-          "start_date",
-          "description"
-        ]
-      }
+        {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "company": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "start_date": {
+              "type": "string"
+            },
+            "end_date": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "points": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "additionalItems": true
+            }
+          },
+          "required": [
+            "title",
+            "company",
+            "location",
+            "start_date",
+            "end_date",
+            "description",
+            "points"
+          ]
+        }
+      ],
+      "additionalItems": true
     },
     "education": {
       "type": "array",
-      "description": "List of educational qualifications",
-      "items": {
-        "type": "object",
-        "properties": {
-          "institution": {
-            "type": "string",
-            "description": "Name of the institution"
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "institution": {
+              "type": "string"
+            },
+            "degree": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "start_date": {
+              "type": "string"
+            },
+            "end_date": {
+              "type": "string"
+            },
+            "gpa": {
+              "type": "string"
+            },
+            "gpa_out_off": {
+              "type": "string"
+            }
           },
-          "degree": {
-            "type": "string",
-            "description": "Degree obtained"
-          },
-          "major": {
-            "type": "string",
-            "description": "Major field of study"
-          },
-          "minor": {
-            "type": "string",
-            "description": "Minor field of study"
-          },
-          "graduation_date": {
-            "type": "string",
-            "format": "date",
-            "description": "Graduation date (YYYY-MM-DD)"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description of relevant coursework or achievements"
-          }
+          "required": [
+            "institution",
+            "degree",
+            "location",
+            "start_date",
+            "end_date",
+            "gpa",
+            "gpa_out_off"
+          ]
         },
-        "required": [
-          "institution",
-          "degree",
-          "major",
-          "graduation_date"
-        ]
-      }
+        {
+          "type": "object",
+          "properties": {
+            "institution": {
+              "type": "string"
+            },
+            "degree": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "start_date": {
+              "type": "string"
+            },
+            "end_date": {
+              "type": "string"
+            },
+            "gpa": {
+              "type": "string"
+            },
+            "gpa_out_off": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "institution",
+            "degree",
+            "location",
+            "start_date",
+            "end_date",
+            "gpa",
+            "gpa_out_off"
+          ]
+        }
+      ],
+      "additionalItems": true
     },
     "skills": {
       "type": "array",
-      "description": "List of skills",
-      "items": {
-        "type": "string",
-        "description": "Skill name"
-      }
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "Name": {
+              "type": "string"
+            },
+            "values": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "additionalItems": true
+            }
+          },
+          "required": [
+            "Name",
+            "values"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "Name": {
+              "type": "string"
+            },
+            "values": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "additionalItems": true
+            }
+          },
+          "required": [
+            "Name",
+            "values"
+          ]
+        }
+      ],
+      "additionalItems": true
     },
     "projects": {
       "type": "array",
-      "description": "List of personal projects",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Name of the project"
-          },
-          "description": {
-            "type": "string",
-            "description": "Brief description of the project"
-          },
-          "url": {
-            "type": "string",
-            "format": "url",
-            "description": "URL of the project"
-          },
-          "technologies": {
-            "type": "array",
-            "description": "List of technologies used in the project",
-            "items": {
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
               "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "start_date": {
+              "type": "string"
+            },
+            "end_date": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "points": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "additionalItems": true
+            },
+            "technologies": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "additionalItems": true
             }
-          }
+          },
+          "required": [
+            "name",
+            "type",
+            "location",
+            "start_date",
+            "end_date"
+          ]
         },
-        "required": [
-          "name",
-          "description"
-        ]
-      }
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "start_date": {
+              "type": "string"
+            },
+            "end_date": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "points": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "additionalItems": true
+            },
+            "technologies": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "additionalItems": true
+            }
+          },
+          "required": [
+            "name",
+            "type",
+            "location",
+            "start_date",
+            "end_date",
+            "description",
+            "url",
+            "points",
+            "technologies"
+          ]
+        }
+      ],
+      "additionalItems": true
     },
     "certifications": {
       "type": "array",
-      "description": "List of certifications",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Name of the certification"
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "issuing_organization": {
+              "type": "string"
+            },
+            "issue_date": {
+              "type": "string"
+            },
+            "expiration_date": {
+              "type": "string"
+            },
+            "credential_id": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
           },
-          "issuing_organization": {
-            "type": "string",
-            "description": "Organization that issued the certification"
-          },
-          "issue_date": {
-            "type": "string",
-            "format": "date",
-            "description": "Issue date of the certification (YYYY-MM-DD)"
-          },
-          "expiration_date": {
-            "type": "string",
-            "format": "date",
-            "description": "Expiration date of the certification (YYYY-MM-DD)"
-          },
-          "credential_id": {
-            "type": "string",
-            "description": "Credential ID of the certification"
-          },
-          "url": {
-            "type": "string",
-            "format": "url",
-            "description": "URL to verify the certification"
-          }
+          "required": [
+            "name",
+            "issuing_organization",
+            "issue_date",
+            "expiration_date",
+            "credential_id",
+            "url"
+          ]
         },
-        "required": [
-          "name",
-          "issuing_organization",
-          "issue_date"
-        ]
-      }
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "issuing_organization": {
+              "type": "string"
+            },
+            "issue_date": {
+              "type": "string"
+            },
+            "expiration_date": {
+              "type": "string"
+            },
+            "credential_id": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "issuing_organization",
+            "issue_date",
+            "credential_id"
+          ]
+        }
+      ],
+      "additionalItems": true
     },
     "awards": {
       "type": "array",
-      "description": "List of awards and honors",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Name of the award"
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "organization": {
+              "type": "string"
+            },
+            "date": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            }
           },
-          "organization": {
-            "type": "string",
-            "description": "Organization that granted the award"
-          },
-          "date": {
-            "type": "string",
-            "format": "date",
-            "description": "Date the award was granted (YYYY-MM-DD)"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description of the award"
-          }
+          "required": [
+            "name",
+            "organization",
+            "date",
+            "description"
+          ]
         },
-        "required": [
-          "name",
-          "organization",
-          "date"
-        ]
-      }
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "organization": {
+              "type": "string"
+            },
+            "date": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "organization",
+            "date"
+          ]
+        }
+      ],
+      "additionalItems": true
     },
     "languages": {
       "type": "array",
-      "description": "List of languages known",
-      "items": {
-        "type": "object",
-        "properties": {
-          "language": {
-            "type": "string",
-            "description": "Name of the language"
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "language": {
+              "type": "string"
+            },
+            "proficiency": {
+              "type": "string"
+            }
           },
-          "proficiency": {
-            "type": "string",
-            "enum": [
-              "Beginner",
-              "Elementary",
-              "Limited Working Proficiency",
-              "Professional Working Proficiency",
-              "Full Professional Proficiency",
-              "Native or Bilingual Proficiency"
-            ],
-            "description": "Proficiency level in the language"
-          }
+          "required": [
+            "language",
+            "proficiency"
+          ]
         },
-        "required": [
-          "language",
-          "proficiency"
-        ]
-      }
-    },
-    "interests": {
-      "type": "array",
-      "description": "List of interests",
-      "items": {
-        "type": "string",
-        "description": "Interest"
-      }
-    },
-    "references": {
-      "type": "array",
-      "description": "List of references",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Name of the reference"
+        {
+          "type": "object",
+          "properties": {
+            "language": {
+              "type": "string"
+            },
+            "proficiency": {
+              "type": "string"
+            }
           },
-          "title": {
-            "type": "string",
-            "description": "Title of the reference"
-          },
-          "company": {
-            "type": "string",
-            "description": "Company of the reference"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "Email address of the reference"
-          },
-          "phone": {
-            "type": "string",
-            "description": "Phone number of the reference"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description of the reference"
-          }
+          "required": [
+            "language",
+            "proficiency"
+          ]
         },
-        "required": [
-          "name",
-          "email",
-          "phone"
-        ]
-      }
+        {
+          "type": "object",
+          "properties": {
+            "language": {
+              "type": "string"
+            },
+            "proficiency": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "language",
+            "proficiency"
+          ]
+        }
+      ],
+      "additionalItems": true
     }
   },
   "required": [
     "personal_information",
+    "summary",
     "experience",
     "education",
     "skills"

@@ -1,0 +1,175 @@
+{
+    "personal_information": {
+        "name": "Valerie Lamb",
+        "email": "zray@example.org",
+        "phone": "910-295-5533x50782",
+        "location": "Johnsonmouth",
+        "linkedin": "https://linkedin.com/in/deborah61",
+        "github": "https://github.com/michaelgomez",
+        "portfolio": "https://marshall-hammond.net"
+    },
+    "summary": "Agent property notice allow treatment.\\nIn history say most article method. Add society central toward smile any. American boy music anything perhaps. Action effect phone side hospital.",
+    "experience": [
+        {
+            "title": "IT sales professional",
+            "company": "Ochoa and Sons",
+            "location": "Lake Marvinmouth",
+            "start_date": "2016-11-21",
+            "end_date": "2023-12-12",
+            "description": "Decision hand happen religious lot. Continue whether and. Visit special one major rule country name. Series home clear education knowledge.",
+            "points": [
+                "Supported mission-critical healthcare applications (TruCare, QlikView)",
+                "Diagnosed and resolved application incidents, cutting average response time",
+                "Collaborated with cross-functional teams to tune Informatica Cloud pipelines"
+            ]
+        },
+        {
+            "title": "IT sales professional",
+            "company": "Ochoa and Sons",
+            "location": "Lake Marvinmouth",
+            "start_date": "2016-11-21",
+            "end_date": "2023-12-12",
+            "description": "Decision hand happen religious lot. Continue whether and. Visit special one major rule country name. Series home clear education knowledge.",
+            "points": [
+                "Supported mission-critical healthcare applications (TruCare, QlikView)",
+                "Diagnosed and resolved application incidents, cutting average response time",
+                "Collaborated with cross-functional teams to tune Informatica Cloud pipelines"
+            ]
+        }
+    ],
+    "education": [
+        {
+            "institution": "Goodman and Sons University",
+            "degree": "Master of Science in Computer Science",
+            "location": "Lake Marvinmouth",
+            "start_date": "2016-11-21",
+            "end_date": "2023-12-12",
+            "gpa": "3.8",
+            "gpa_out_off": "4.0"
+        },
+        {
+            "institution": "Goodman and Sons University",
+            "degree": "Master of Science in Computer Science",
+            "location": "Lake Marvinmouth",
+            "start_date": "2016-11-21",
+            "end_date": "2023-12-12",
+            "gpa": "3.8",
+            "gpa_out_off": "4.0"
+        }
+    ],
+    "skills": [
+        {
+            "Name": "Languages",
+            "values": [
+                "Dart",
+                "Java",
+                "Javascript",
+                "C",
+                "Python",
+                "C#",
+                "SQL",
+                "HTML",
+                "CSS"
+            ]
+        },
+        {
+            "Name": "Frameworks",
+            "values": [
+                "Flutter",
+                "Firebase",
+                "NodeJS",
+                "Spring",
+                "Spring boot",
+                "Spring MVC",
+                "Maven",
+                "RESTful APIs"
+            ]
+        }
+    ],
+    "projects": [
+        {
+            "name": "Target Intuitive Bandwidth",
+            "type": "Ochoa and Sons",
+            "location": "Lake Marvinmouth",
+            "start_date": "2016-11-21",
+            "end_date": "2023-12-12",
+            "description": "Decision hand happen religious lot. Continue whether and. Visit special one major rule country name. Series home clear education knowledge.",
+            "url": "https://martin.biz",
+            "points": [
+                "Supported mission-critical healthcare applications (TruCare, QlikView)",
+                "Diagnosed and resolved application incidents, cutting average response time",
+                "Collaborated with cross-functional teams to tune Informatica Cloud pipelines"
+            ],
+            "technologies": [
+                "serve",
+                "line",
+                "site"
+            ]
+        },
+        {
+            "name": "Target Intuitive Bandwidth",
+            "type": "Ochoa and Sons",
+            "location": "Lake Marvinmouth",
+            "start_date": "2016-11-21",
+            "end_date": "2023-12-12",
+            "description": "Decision hand happen religious lot. Continue whether and. Visit special one major rule country name. Series home clear education knowledge.",
+            "url": "https://martin.biz",
+            "points": [
+                "Supported mission-critical healthcare applications (TruCare, QlikView)",
+                "Diagnosed and resolved application incidents, cutting average response time",
+                "Collaborated with cross-functional teams to tune Informatica Cloud pipelines"
+            ],
+            "technologies": [
+                "serve",
+                "line",
+                "site"
+            ]
+        }
+    ],
+    "certifications": [
+        {
+            "name": "Integrated exuding forecast",
+            "issuing_organization": "Larson and Sons",
+            "issue_date": "2021-02-07",
+            "expiration_date": "2030-01-30",
+            "credential_id": "a2b0f912-8d4c-40f2-be00-288cfa1f5711",
+            "url": "https://collins.com"
+        },
+        {
+            "name": "Fundamental tangible synergy",
+            "issuing_organization": "Jensen Ltd",
+            "issue_date": "2018-08-18",
+            "expiration_date": "2025-10-23",
+            "credential_id": "1b0229e6-39a7-4596-896e-91741a26ee56",
+            "url": "https://daniel.com"
+        }
+    ],
+    "awards": [
+        {
+            "name": "Quality-focused 3rdgeneration hierarchy",
+            "organization": "Little-Austin",
+            "date": "2011-06-19",
+            "description": "Fear research order expect financial provide. Card strategy different billion do read mission game."
+        },
+        {
+            "name": "Reduced bifurcated open architecture",
+            "organization": "Chang-Stafford",
+            "date": "2012-05-12",
+            "description": "Simple year explain bank national million tree. Development must admit follow stuff save. Work door above outside."
+        }
+    ],
+    "languages": [
+        {
+            "language": "English",
+            "proficiency": "Limited Working Proficiency"
+        },
+        {
+            "language": "Spanish",
+            "proficiency": "Beginner"
+        },
+        {
+            "language": "French",
+            "proficiency": "Limited Working Proficiency"
+        }
+    ]
+}
