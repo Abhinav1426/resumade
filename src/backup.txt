@@ -1,0 +1,139 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from bs4 import BeautifulSoup
+
+def scrape_with_selenium(url):
+    options = Options()
+    options.add_argument('--headless')
+    driver = webdriver.Chrome(options=options)
+
+    driver.get(url)
+    soup = BeautifulSoup(driver.page_source, 'lxml')
+    driver.quit()
+
+    # Now extract title, company, description similar to above
+    # (same logic as in requests + BeautifulSoup)
+
+    return soup
+
+
+
+
+
+
+
+
+
+
+
+def scrape_with_selenium(url):
+    options = Options()
+    options.add_argument('--headless')
+    driver = webdriver.Chrome(options=options)
+
+    driver.get(url)
+    soup = BeautifulSoup(driver.page_source, 'lxml')
+    driver.quit()
+
+    # Now extract title, company, description similar to above
+    # (same logic as in requests + BeautifulSoup)
+
+    job_data = {}
+
+    # Customize these selectors based on the site you're targeting
+    job_data["title"] = soup.find("h1") and soup.find("h1").get_text(strip=True)
+    job_data["company"] = soup.find("a", {"class": "topcard__org-name-link"}) or \
+                          soup.find("div", class_="company")  # fallback
+    if job_data["company"]:
+        job_data["company"] = job_data["company"].get_text(strip=True)
+
+    job_data["location"] = soup.find("span", class_="topcard__flavor--bullet") or \
+                           soup.find("div", class_="location")
+    if job_data["location"]:
+        job_data["location"] = job_data["location"].get_text(strip=True)
+
+    # Job description area (look for large <div> or <section>)
+    desc_section = soup.find("div", {"class": "description__text"}) or \
+                   soup.find("div", {"id": "jobDescriptionText"})
+    if desc_section:
+        job_data["description"] = desc_section.get_text(strip=True)
+
+    # Reposted info
+    reposted_tag = soup.find("span", class_="posted-time-ago__text")
+    if reposted_tag:
+        job_data["posted_or_reposted"] = reposted_tag.get_text(strip=True)
+
+    # Applicants info
+    applicants_tag = soup.find("span", class_="num-applicants__caption")
+    if applicants_tag:
+        job_data["clicks_or_applicants"] = applicants_tag.get_text(strip=True)
+
+
+    return job_data
+
+
+def is_visible(element):
+    # Filter out invisible tags like <script>, <style>, etc.
+    if element.parent.name in ['style', 'script', 'head', 'meta', '[document]']:
+        return False
+    return True
+
+def scrape_general_page(url):
+    headers = {
+        'User-Agent': 'Mozilla/5.0'
+    }
+
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+    except Exception as e:
+        return {"error": str(e)}
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    page_data = {
+        "url": url,
+        "page_title": soup.title.string.strip() if soup.title else None,
+        "headings": [],
+        "paragraphs": [],
+        "job_sections": []
+    }
+
+    # Extract headings
+    for tag in ['h1', 'h2', 'h3']:
+        for heading in soup.find_all(tag):
+            text = heading.get_text(strip=True)
+            if text:
+                page_data["headings"].append(text)
+
+    # Extract visible paragraphs
+    paragraphs = soup.find_all('p')
+    for p in paragraphs:
+        text = p.get_text(strip=True)
+        if text and is_visible(p):
+            page_data["paragraphs"].append(text)
+
+    # Try to extract job-related sections
+    keywords = ['job', 'responsibilities', 'requirements', 'description', 'role']
+    pattern = re.compile('|'.join(keywords), re.IGNORECASE)
+    all_divs = soup.find_all(['div', 'section'])
+
+    for div in all_divs:
+        text = div.get_text(separator=' ', strip=True)
+        if text and pattern.search(text):
+            page_data["job_sections"].append(text)
+
+    return page_data
+
+
+    # Reposted info
+    reposted_tag = soup.find("span", class_="posted-time-ago__text")
+    if reposted_tag:
+        job_data["posted_or_reposted"] = reposted_tag.get_text(strip=True)
+
+    # Applicants info
+    applicants_tag = soup.find("span", class_="num-applicants__caption")
+    if applicants_tag:
+        job_data["clicks_or_applicants"] = applicants_tag.get_text(strip=True)
+
+
