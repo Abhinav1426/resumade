@@ -98,7 +98,16 @@
             "start_date": "November 20212",
             "end_date": "April 2022",
             "description": "",
-            "url": "",
+            "urls": [
+                {
+                    "name": "",
+                    "url": ""
+                },
+                {
+                    "name": "",
+                    "url": ""
+                }
+            ],
             "points": [
                 "Developed and designed Smart Home Automation where we take existing appliances to online. It specifically focuses on the development of a user friendly IOT based home automation system that is able to control various components inside home via internet",
                 "System consists of mobile app which was developed in flutter where u can control the home applications through the app",
@@ -117,7 +126,16 @@
             "start_date": "August 2021",
             "end_date": "January 2022",
             "description": "",
-            "url": "",
+            "urls": [
+                {
+                    "name": "",
+                    "url": ""
+                },
+                {
+                    "name": "",
+                    "url": ""
+                }
+            ],
             "points": [
                 "Developed an Emotion Recognition System using YOLO3 and TensorFlow where the model can recognise different types of emotions",
                 "Designed a web interface using Django framework",

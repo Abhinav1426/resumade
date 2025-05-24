@@ -50,7 +50,9 @@ def linkedin_scrape_job_details(url):
 if __name__ == '__main__':
     links=[
            'https://www.linkedin.com/jobs/view/4223614572',
-           'https://www.linkedin.com/jobs/view/4217209535']
+           'https://www.linkedin.com/jobs/view/4217209535',
+            'https://www.linkedin.com/jobs/view/4204020731'
+    ]
     for i in links:
         job = linkedin_scrape_job_details   (i)
         pprint(job)

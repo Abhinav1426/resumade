@@ -327,8 +327,40 @@
             "description": {
               "type": "string"
             },
-            "url": {
-              "type": "string"
+            "urls": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "url"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "url"
+                  ]
+                }
+              ]
             },
             "points": {
               "type": "array",
