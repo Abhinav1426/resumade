@@ -31,10 +31,7 @@
         "name",
         "email",
         "phone",
-        "location",
-        "linkedin",
-        "github",
-        "portfolio"
+        "location"
       ]
     },
     "summary": {
