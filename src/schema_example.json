@@ -1,60 +1,52 @@
 {
     "personal_information": {
-        "name": "Valerie Lamb",
-        "email": "zray@example.org",
-        "phone": "910-295-5533x50782",
-        "location": "Johnsonmouth",
-        "linkedin": "https://linkedin.com/in/deborah61",
-        "github": "https://github.com/michaelgomez",
-        "portfolio": "https://marshall-hammond.net"
+        "name": "MALLARAPU PAVAN ABHINAV",
+        "email": "mpabhinav1426@gmail.com",
+        "phone": "+91-8919707712",
+        "location": "Alwal, Hyderabad, Telangana 500010",
+        "linkedin": "https://www.linkedin.com/in/abhinav1426/",
+        "github": "https://github.com/Abhinav1426",
+        "portfolio": "https://amp.dev"
     },
-    "summary": "Agent property notice allow treatment.\\nIn history say most article method. Add society central toward smile any. American boy music anything perhaps. Action effect phone side hospital.",
+    "summary": "Results-driven Software Engineer with graduate-level CS training and 2+ years of hands-on experience building resilient, data-intensive and cloud-native applications. Proficient in Python, Java/Spring Boot, JavaScript, SQL, AWS, and Kubernetes, with a strong DevOps mindset (CI/CD, Docker, Git). Delivered REST APIs, real-time streaming services and full-stack features used by thousands of end users while maintaining 98% uptime. Adept at collaborating with cross-functional teams, and rapidly learning domain-specific tech",
     "experience": [
         {
-            "title": "IT sales professional",
-            "company": "Ochoa and Sons",
-            "location": "Lake Marvinmouth",
-            "start_date": "2016-11-21",
-            "end_date": "2023-12-12",
-            "description": "Decision hand happen religious lot. Continue whether and. Visit special one major rule country name. Series home clear education knowledge.",
+            "title": "Product Developer",
+            "company": "ADP",
+            "location": "Hyderabad, India",
+            "start_date": "June 2022",
+            "end_date": "Present",
+            "description": "",
             "points": [
-                "Supported mission-critical healthcare applications (TruCare, QlikView)",
-                "Diagnosed and resolved application incidents, cutting average response time",
-                "Collaborated with cross-functional teams to tune Informatica Cloud pipelines"
-            ]
-        },
-        {
-            "title": "IT sales professional",
-            "company": "Ochoa and Sons",
-            "location": "Lake Marvinmouth",
-            "start_date": "2016-11-21",
-            "end_date": "2023-12-12",
-            "description": "Decision hand happen religious lot. Continue whether and. Visit special one major rule country name. Series home clear education knowledge.",
-            "points": [
-                "Supported mission-critical healthcare applications (TruCare, QlikView)",
-                "Diagnosed and resolved application incidents, cutting average response time",
-                "Collaborated with cross-functional teams to tune Informatica Cloud pipelines"
+                "Resolved all security vulnerabilities of Smart Compliance Canada Application.",
+                "Designed and Developed Application gateway for Smart Compliance Canada which handles all the traffic coming to the application written in Asynchronous Java.",
+                "Developed services like Year End Tax Filing, ROE for Smart Compliance Canada.",
+                "Managed and Upgraded the Springboot versions and JDK versions for all the microservices for Smart Compliance Canada.",
+                "Reviewed the Designs and security vulnerabilities for Smart Compliance Canada.",
+                "Fixed critical bugs and Optimized the performance of all the microservices of Smart Compliance Canada",
+                "Developed Paygroup feature for the existing product services like wage payment, third party payments.",
+                "Worked session management for Smart Compliance Canada application"
             ]
         }
     ],
     "education": [
         {
-            "institution": "Goodman and Sons University",
+            "institution": "GEETANJALI COLLEGE OF ENGINEERING AND TECHNOLOGY",
             "degree": "Master of Science in Computer Science",
-            "location": "Lake Marvinmouth",
-            "start_date": "2016-11-21",
-            "end_date": "2023-12-12",
-            "gpa": "3.8",
-            "gpa_out_off": "4.0"
+            "location": "LHyderabad, Telangana",
+            "start_date": "June 2018",
+            "end_date": "June 2022",
+            "gpa": "7.34",
+            "gpa_out_off": "10"
         },
         {
-            "institution": "Goodman and Sons University",
+            "institution": "Narayana Junior College (ALWAL)",
             "degree": "Master of Science in Computer Science",
-            "location": "Lake Marvinmouth",
-            "start_date": "2016-11-21",
-            "end_date": "2023-12-12",
-            "gpa": "3.8",
-            "gpa_out_off": "4.0"
+            "location": "Hyderabad, Telangana",
+            "start_date": "",
+            "end_date": "May 2016",
+            "gpa": "71.7",
+            "gpa_out_off": "100"
         }
     ],
     "skills": [
@@ -84,92 +76,97 @@
                 "Maven",
                 "RESTful APIs"
             ]
+        },
+        {
+            "Name": "Developer Tools",
+            "values": [
+                "PostMan",
+                "Maven",
+                "Docker",
+                "Kubernetes",
+                "VS Code IDE",
+                "MS Office",
+                "Eclipse IDE"
+            ]
         }
     ],
     "projects": [
         {
-            "name": "Target Intuitive Bandwidth",
-            "type": "Ochoa and Sons",
-            "location": "Lake Marvinmouth",
-            "start_date": "2016-11-21",
-            "end_date": "2023-12-12",
-            "description": "Decision hand happen religious lot. Continue whether and. Visit special one major rule country name. Series home clear education knowledge.",
-            "url": "https://martin.biz",
+            "name": "Smart Home Automation",
+            "type": "Geethanjali College of Engineering",
+            "location": "Hyderabad, India",
+            "start_date": "November 20212",
+            "end_date": "April 2022",
+            "description": "",
+            "url": "",
             "points": [
-                "Supported mission-critical healthcare applications (TruCare, QlikView)",
-                "Diagnosed and resolved application incidents, cutting average response time",
-                "Collaborated with cross-functional teams to tune Informatica Cloud pipelines"
+                "Developed and designed Smart Home Automation where we take existing appliances to online. It specifically focuses on the development of a user friendly IOT based home automation system that is able to control various components inside home via internet",
+                "System consists of mobile app which was developed in flutter where u can control the home applications through the app",
+                "Integration with Voice Assistants like Google Assistant, Alexa. Where u can control the home applications using the devices which support these voice assistants"
             ],
             "technologies": [
-                "serve",
-                "line",
-                "site"
+                "Flutter",
+                "IOT",
+                "Assembly Language"
             ]
         },
         {
-            "name": "Target Intuitive Bandwidth",
-            "type": "Ochoa and Sons",
-            "location": "Lake Marvinmouth",
-            "start_date": "2016-11-21",
-            "end_date": "2023-12-12",
-            "description": "Decision hand happen religious lot. Continue whether and. Visit special one major rule country name. Series home clear education knowledge.",
-            "url": "https://martin.biz",
+            "name": "Music Recommendation System",
+            "type": "Geethanjali College of Engineering ",
+            "location": "Hyderabad, India",
+            "start_date": "August 2021",
+            "end_date": "January 2022",
+            "description": "",
+            "url": "",
             "points": [
-                "Supported mission-critical healthcare applications (TruCare, QlikView)",
-                "Diagnosed and resolved application incidents, cutting average response time",
-                "Collaborated with cross-functional teams to tune Informatica Cloud pipelines"
+                "Developed an Emotion Recognition System using YOLO3 and TensorFlow where the model can recognise different types of emotions",
+                "Designed a web interface using Django framework",
+                "Capturing the users emotions using OpenCV and sending it the model feed. This CNN model here predicts the emotions from the images and then recommends songs based on these predicted emotions",
+                "Based on these prediction user is then recommened songs on websites like YouTube, Spotify, Amazon Prime Music using their API’s"
             ],
             "technologies": [
-                "serve",
-                "line",
-                "site"
+                "open cv",
+                "tesorflow",
+                "keres",
+                "flask",
+                "ML",
+                "CNN"
             ]
         }
     ],
     "certifications": [
         {
-            "name": "Integrated exuding forecast",
-            "issuing_organization": "Larson and Sons",
-            "issue_date": "2021-02-07",
+            "name": "AWS Solution architect",
+            "issuing_organization": "Amazon",
+            "issue_date": "2025-02-07",
             "expiration_date": "2030-01-30",
             "credential_id": "a2b0f912-8d4c-40f2-be00-288cfa1f5711",
-            "url": "https://collins.com"
-        },
-        {
-            "name": "Fundamental tangible synergy",
-            "issuing_organization": "Jensen Ltd",
-            "issue_date": "2018-08-18",
-            "expiration_date": "2025-10-23",
-            "credential_id": "1b0229e6-39a7-4596-896e-91741a26ee56",
-            "url": "https://daniel.com"
+            "url": "https://casfagfgwrgas.com"
         }
     ],
     "awards": [
         {
-            "name": "Quality-focused 3rdgeneration hierarchy",
-            "organization": "Little-Austin",
-            "date": "2011-06-19",
-            "description": "Fear research order expect financial provide. Card strategy different billion do read mission game."
-        },
-        {
-            "name": "Reduced bifurcated open architecture",
-            "organization": "Chang-Stafford",
-            "date": "2012-05-12",
-            "description": "Simple year explain bank national million tree. Development must admit follow stuff save. Work door above outside."
+            "name": "Winner Jumpstart Hackathon ADP",
+            "type": "ADP",
+            "location": "Hyderabad, India",
+            "date": "April 2022",
+            "description": "Winner"
         }
     ],
     "extracurricular/achievements": [
         {
-            "name": "Quality-focused 3rdgeneration hierarchy",
-            "organization": "Little-Austin",
-            "date": "2011-06-19",
-            "description": "Fear research order expect financial provide. Card strategy different billion do read mission game."
+            "name": "Event Manager of Bhaswara 2021",
+            "type": "Geethanjali College of Engineering",
+            "location": "Hyderabad, India",
+            "date": "April 2021",
+            "description": "Event Manager"
         },
         {
-            "name": "Reduced bifurcated open architecture",
-            "organization": "Chang-Stafford",
-            "date": "2012-05-12",
-            "description": "Simple year explain bank national million tree. Development must admit follow stuff save. Work door above outside."
+            "name": "Event Manager of Bhaswara 2022",
+            "type": "Geethanjali College of Engineering",
+            "location": "Hyderabad, India",
+            "date": "April 2022",
+            "description": "Event Manager"
         }
     ],
     "languages": [
@@ -178,12 +175,12 @@
             "proficiency": "Limited Working Proficiency"
         },
         {
-            "language": "Spanish",
-            "proficiency": "Beginner"
+            "language": "Telugu",
+            "proficiency": "Proficiency"
         },
         {
-            "language": "French",
-            "proficiency": "Limited Working Proficiency"
+            "language": "Hindi",
+            "proficiency": "Proficiency"
         }
     ]
 }
