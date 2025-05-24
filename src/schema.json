@@ -556,6 +556,57 @@
       ],
       "additionalItems": true
     },
+    "extracurricular/achievements": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "organization": {
+              "type": "string"
+            },
+            "date": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "organization",
+            "date",
+            "description"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "organization": {
+              "type": "string"
+            },
+            "date": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "organization",
+            "date"
+          ]
+        }
+      ],
+      "additionalItems": true
+    },
     "languages": {
       "type": "array",
       "items": [
