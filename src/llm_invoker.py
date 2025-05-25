@@ -27,7 +27,16 @@ def response_to_json(content,llm_provider='deepseek'):
         llm_provider = 'deepseek'
     match llm_provider:
         case 'google':
-            return json.loads(content)
+            if content.startswith("```json"):
+                content = content.removeprefix("```json").removesuffix("```").strip()
+            elif content.startswith("```"):
+                content = content.removeprefix("```").removesuffix("```").strip()
+            try:
+                parsed_json = json.loads(content)
+                return parsed_json
+            except json.JSONDecodeError as e:
+                print("❌ Failed to parse JSON. Here's the raw content:\n", content)
+                raise e
         case 'deepseek':
             if content.startswith("```json"):
                 content = content.removeprefix("```json").removesuffix("```").strip()
@@ -63,10 +72,11 @@ def parse_file_to_json(text):
         {"role": "system", "content": schema_instruction},
         {"role": "user", "content": text}
     ]
-    client , model = create_client()
+    llm = 'google'
+    client , model = create_client(llm)
     response = openAi_llm_caller(client,model,message)
     content = response.content
-    return response_to_json(content)
+    return response_to_json(content,llm)
 
 
 
