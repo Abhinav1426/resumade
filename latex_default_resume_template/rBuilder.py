@@ -11,6 +11,7 @@ from reportlab.lib.enums import TA_JUSTIFY
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.platypus import Image, Table, TableStyle
 
 # —— Register only the fonts you have ——
 pdfmetrics.registerFont(TTFont('CMR10',  'cmunrm.ttf'))   # Roman
@@ -50,7 +51,7 @@ def resumeStyling():
         fontSize=huge,
         leading=10,
         alignment=1,
-        spaceAfter=16,
+        spaceAfter=18,
     ))
 
     # —— Contact line ——
@@ -179,19 +180,92 @@ def resumeStyling():
     ))
     return styles
 
-def personalInformationBlock(story,styles):
-    # —— Header ——
+
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
+from reportlab.lib.enums import TA_LEFT
+from reportlab.platypus import Image, Paragraph, Table, TableStyle
+
+# 1) Make sure your 'Name' style is left-aligned:
+
+
+
+def personalInformationBlock(story, styles):
+    # — Name —
     story.append(Paragraph('BUSHA VAISHNAV', styles['Name']))
-    story.append(Paragraph(
-        '+1 940-629-4438 · '
-        '<a href="mailto:vaishnavbusha@gmail.com">'
-          '<font color="blue">vaishnavbusha@gmail.com</font>'
-        '</a> · '
-        '<a href="https://linkedin.com/in/vaishnavbusha/">'
-          '<font color="blue">linkedin.com/in/vaishnavbusha/</font>'
+
+    # define a 4-space separator
+    SEP = '&nbsp;&nbsp;&nbsp;&nbsp;'
+
+    contact_html = SEP.join([
+        # phone
+        '<img src="phone.png" width="10" height="10"/>'
+        '&nbsp;+91-8919707712',
+        # email
+        '<img src="mail.png" width="10" height="10"/>'
+        '&nbsp;<a href="mailto:mpabhinav1426@gmail.com">'
+          '<font color="blue">mpabhinav1426@gmail.com</font>'
         '</a>',
-        styles['HeaderInfo']
-    ))
+        # linkedin
+        '<img src="linkedin.png" width="10" height="10"/>'
+        '&nbsp;<a href="https://www.linkedin.com/in/abhinav1426/">'
+          '<font color="blue">linkedin.com/in/abhinav1426/</font>'
+        '</a>'
+    ])
+
+    story.append(Paragraph(contact_html, styles['HeaderInfo']))
+    # — your spaced name as before —
+    # story.append(Paragraph('BUSHA VAISHNAV', styles['Name']))
+    # # — Name (now flush left) —
+    # story.append(Paragraph('BUSHA VAISHNAV', styles['Name']))
+    #
+    # # — Three icon+text pairs —
+    # items = [
+    #     ('phone.png', '+91-8919707712', None),
+    #     ('mail.png', 'mpabhinav1426@gmail.com', 'mailto:mpabhinav1426@gmail.com'),
+    #     ('linkedin.png', 'linkedin.com/in/abhinav1426/', 'https://www.linkedin.com/in/abhinav1426/'),
+    # ]
+    #
+    # # Build each inner 1×2 (icon + text)
+    # inners = []
+    # for icon_file, text, href in items:
+    #     icon = Image(icon_file, width=10, height=10)
+    #     txt = f'<a href="{href}"><font color="blue">{text}</font></a>' if href else text
+    #     para = Paragraph(txt, styles['HeaderInfo'])
+    #
+    #     inner = Table([[icon, para]], colWidths=[10, None])
+    #     inner.setStyle(TableStyle([
+    #         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    #         ('ALIGN', (0, 0), (0, 0), 'RIGHT'),
+    #         ('ALIGN', (1, 0), (1, 0), 'LEFT'),
+    #         ('RIGHTPADDING', (0, 0), (0, 0), 2),  # 2pt gap icon→text
+    #         ('LEFTPADDING', (0, 0), (-1, -1), 0),
+    #         ('TOPPADDING', (0, 0), (-1, -1), 0),
+    #         ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+    #     ]))
+    #     inners.append(inner)
+    #
+    # # Compute each outer cell = 1/3 page width (minus ½" margins)
+    # page_w = letter[0]
+    # usable_w = page_w - 2 * (0.5 * inch)
+    # third_width = usable_w / 3
+    #
+    # # 2) Outer table flush-left, with all cells left-aligned
+    # outer = Table([inners],
+    #               colWidths=[third_width] * 3,
+    #               hAlign='LEFT')
+    # outer.setStyle(TableStyle([
+    #     ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    #     ('ALIGN', (0, 0), (-1, -1), 'LEFT'),  # everything left
+    #     ('LEFTPADDING', (0, 0), (-1, -1), 0),
+    #     ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+    #     ('TOPPADDING', (0, 0), (-1, -1), 0),
+    #     ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+    # ]))
+    #
+    # story.append(outer)
+
+
 def education(story,styles,doc):
     # —— Education ——
     story.append(Paragraph('Education', styles['SectionHeading']))
