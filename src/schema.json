@@ -17,14 +17,25 @@
         "location": {
           "type": "string"
         },
-        "linkedin": {
-          "type": "string"
-        },
-        "github": {
-          "type": "string"
-        },
-        "portfolio": {
-          "type": "string"
+        "socials": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "link": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "link"
+              ]
+            }
+          ]
         }
       },
       "required": [
@@ -37,16 +48,16 @@
     "summary": {
       "type": "string"
     },
-    "experience": {
+    "experiences": {
       "type": "array",
       "items": [
         {
           "type": "object",
           "properties": {
-            "title": {
+            "designation": {
               "type": "string"
             },
-            "company": {
+            "companyName": {
               "type": "string"
             },
             "location": {
@@ -58,7 +69,7 @@
             "end_date": {
               "type": "string"
             },
-            "description": {
+            "caption": {
               "type": "string"
             },
             "points": {
@@ -66,73 +77,18 @@
               "items": [
                 {
                   "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
                 }
-              ],
-              "additionalItems": true
+              ]
             }
           },
           "required": [
-            "title",
-            "company",
+            "designation",
+            "companyName",
             "location",
             "start_date"
           ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "title": {
-              "type": "string"
-            },
-            "company": {
-              "type": "string"
-            },
-            "location": {
-              "type": "string"
-            },
-            "start_date": {
-              "type": "string"
-            },
-            "end_date": {
-              "type": "string"
-            },
-            "description": {
-              "type": "string"
-            },
-            "points": {
-              "type": "array",
-              "items": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                }
-              ],
-              "additionalItems": true
-            }
-          },
-          "required": [
-            "title",
-            "company",
-            "location",
-            "start_date",
-            "end_date",
-            "description",
-            "points"
-          ]
         }
-      ],
-      "additionalItems": true
+      ]
     },
     "education": {
       "type": "array",
@@ -167,48 +123,11 @@
             "degree",
             "location",
             "start_date",
-            "end_date",
-            "gpa",
-            "gpa_out_off"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "institution": {
-              "type": "string"
-            },
-            "degree": {
-              "type": "string"
-            },
-            "location": {
-              "type": "string"
-            },
-            "start_date": {
-              "type": "string"
-            },
-            "end_date": {
-              "type": "string"
-            },
-            "gpa": {
-              "type": "string"
-            },
-            "gpa_out_off": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "institution",
-            "degree",
-            "location",
-            "start_date",
-            "end_date",
             "gpa",
             "gpa_out_off"
           ]
         }
-      ],
-      "additionalItems": true
+      ]
     },
     "skills": {
       "type": "array",
@@ -216,92 +135,24 @@
         {
           "type": "object",
           "properties": {
-            "Name": {
+            "name": {
               "type": "string"
             },
-            "values": {
+            "data": {
               "type": "array",
               "items": [
                 {
                   "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
                 }
-              ],
-              "additionalItems": true
+              ]
             }
           },
           "required": [
-            "Name",
-            "values"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "Name": {
-              "type": "string"
-            },
-            "values": {
-              "type": "array",
-              "items": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                }
-              ],
-              "additionalItems": true
-            }
-          },
-          "required": [
-            "Name",
-            "values"
+            "name",
+            "data"
           ]
         }
-      ],
-      "additionalItems": true
+      ]
     },
     "projects": {
       "type": "array",
@@ -309,105 +160,10 @@
         {
           "type": "object",
           "properties": {
-            "name": {
+            "projectName": {
               "type": "string"
             },
-            "type": {
-              "type": "string"
-            },
-            "location": {
-              "type": "string"
-            },
-            "start_date": {
-              "type": "string"
-            },
-            "end_date": {
-              "type": "string"
-            },
-            "description": {
-              "type": "string"
-            },
-            "urls": {
-              "type": "array",
-              "items": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string"
-                    },
-                    "url": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "name",
-                    "url"
-                  ]
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string"
-                    },
-                    "url": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "name",
-                    "url"
-                  ]
-                }
-              ]
-            },
-            "points": {
-              "type": "array",
-              "items": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                }
-              ],
-              "additionalItems": true
-            },
-            "technologies": {
-              "type": "array",
-              "items": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
-                }
-              ],
-              "additionalItems": true
-            }
-          },
-          "required": [
-            "name",
-            "type",
-            "location",
-            "start_date",
-            "end_date"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "type": {
+            "caption": {
               "type": "string"
             },
             "location": {
@@ -417,59 +173,55 @@
               "type": "string"
             },
             "end_date": {
-              "type": "string"
-            },
-            "description": {
               "type": "string"
             },
             "url": {
               "type": "string"
             },
-            "points": {
+            "projectDetails": {
               "type": "array",
               "items": [
                 {
                   "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
                 }
-              ],
-              "additionalItems": true
+              ]
             },
-            "technologies": {
+            "externalSources": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "link": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "link"
+                  ]
+                }
+              ]
+            },
+            "technologiesUsed": {
               "type": "array",
               "items": [
                 {
                   "type": "string"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "string"
                 }
-              ],
-              "additionalItems": true
+              ]
             }
           },
           "required": [
-            "name",
-            "type",
+            "projectName",
             "location",
-            "start_date",
-            "end_date",
-            "description",
-            "url",
-            "points",
-            "technologies"
+            "projectDetails"
           ]
         }
-      ],
-      "additionalItems": true
+      ]
     },
     "certifications": {
       "type": "array",
@@ -504,38 +256,8 @@
             "credential_id",
             "url"
           ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "issuing_organization": {
-              "type": "string"
-            },
-            "issue_date": {
-              "type": "string"
-            },
-            "expiration_date": {
-              "type": "string"
-            },
-            "credential_id": {
-              "type": "string"
-            },
-            "url": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "name",
-            "issuing_organization",
-            "issue_date",
-            "credential_id"
-          ]
         }
-      ],
-      "additionalItems": true
+      ]
     },
     "awards": {
       "type": "array",
@@ -546,7 +268,10 @@
             "name": {
               "type": "string"
             },
-            "organization": {
+            "type": {
+              "type": "string"
+            },
+            "location": {
               "type": "string"
             },
             "date": {
@@ -558,35 +283,13 @@
           },
           "required": [
             "name",
-            "organization",
+            "type",
+            "location",
             "date",
             "description"
           ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "organization": {
-              "type": "string"
-            },
-            "date": {
-              "type": "string"
-            },
-            "description": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "name",
-            "organization",
-            "date"
-          ]
         }
-      ],
-      "additionalItems": true
+      ]
     },
     "extracurricular/achievements": {
       "type": "array",
@@ -597,7 +300,10 @@
             "name": {
               "type": "string"
             },
-            "organization": {
+            "type": {
+              "type": "string"
+            },
+            "location": {
               "type": "string"
             },
             "date": {
@@ -609,35 +315,13 @@
           },
           "required": [
             "name",
-            "organization",
+            "type",
+            "location",
             "date",
             "description"
           ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "organization": {
-              "type": "string"
-            },
-            "date": {
-              "type": "string"
-            },
-            "description": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "name",
-            "organization",
-            "date"
-          ]
         }
-      ],
-      "additionalItems": true
+      ]
     },
     "languages": {
       "type": "array",
@@ -656,46 +340,14 @@
             "language",
             "proficiency"
           ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "language": {
-              "type": "string"
-            },
-            "proficiency": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "language",
-            "proficiency"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "language": {
-              "type": "string"
-            },
-            "proficiency": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "language",
-            "proficiency"
-          ]
         }
-      ],
-      "additionalItems": true
+      ]
     }
   },
   "required": [
     "personal_information",
-    "summary",
-    "experience",
     "education",
-    "skills"
+    "skills",
+    "extracurricular/achievements"
   ]
 }

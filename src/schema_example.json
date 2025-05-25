@@ -4,19 +4,30 @@
         "email": "mpabhinav1426@gmail.com",
         "phone": "+91-8919707712",
         "location": "Alwal, Hyderabad, Telangana 500010",
-        "linkedin": "https://www.linkedin.com/in/abhinav1426/",
-        "github": "https://github.com/Abhinav1426",
-        "portfolio": "https://amp.dev"
+        "socials": [
+            {
+                "name": "LinkedIn",
+                "link": "https://www.linkedin.com/in/abhinav1426/"
+            },
+            {
+                "name": "github",
+                "link": "https://github.com/Abhinav1426"
+            },
+            {
+                "name": "Portfolio",
+                "link": "https://amp.dev"
+            }
+        ]
     },
     "summary": "Results-driven Software Engineer with graduate-level CS training and 2+ years of hands-on experience building resilient, data-intensive and cloud-native applications. Proficient in Python, Java/Spring Boot, JavaScript, SQL, AWS, and Kubernetes, with a strong DevOps mindset (CI/CD, Docker, Git). Delivered REST APIs, real-time streaming services and full-stack features used by thousands of end users while maintaining 98% uptime. Adept at collaborating with cross-functional teams, and rapidly learning domain-specific tech",
-    "experience": [
+    "experiences": [
         {
-            "title": "Product Developer",
-            "company": "ADP",
+            "designation": "Product Developer",
+            "companyName": "ADP",
             "location": "Hyderabad, India",
             "start_date": "June 2022",
             "end_date": "Present",
-            "description": "",
+            "caption": "",
             "points": [
                 "Resolved all security vulnerabilities of Smart Compliance Canada Application.",
                 "Designed and Developed Application gateway for Smart Compliance Canada which handles all the traffic coming to the application written in Asynchronous Java.",
@@ -33,7 +44,7 @@
         {
             "institution": "GEETANJALI COLLEGE OF ENGINEERING AND TECHNOLOGY",
             "degree": "Master of Science in Computer Science",
-            "location": "LHyderabad, Telangana",
+            "location": "Hyderabad, Telangana",
             "start_date": "June 2018",
             "end_date": "June 2022",
             "gpa": "7.34",
@@ -51,8 +62,8 @@
     ],
     "skills": [
         {
-            "Name": "Languages",
-            "values": [
+            "name": "Languages",
+            "data": [
                 "Dart",
                 "Java",
                 "Javascript",
@@ -65,8 +76,8 @@
             ]
         },
         {
-            "Name": "Frameworks",
-            "values": [
+            "name": "Frameworks",
+            "data": [
                 "Flutter",
                 "Firebase",
                 "NodeJS",
@@ -78,8 +89,8 @@
             ]
         },
         {
-            "Name": "Developer Tools",
-            "values": [
+            "name": "Developer Tools",
+            "data": [
                 "PostMan",
                 "Maven",
                 "Docker",
@@ -92,63 +103,31 @@
     ],
     "projects": [
         {
-            "name": "Smart Home Automation",
-            "type": "Geethanjali College of Engineering",
+            "projectName": "Smart Home Automation",
+            "caption": "Geethanjali College of Engineering",
             "location": "Hyderabad, India",
             "start_date": "November 20212",
             "end_date": "April 2022",
-            "description": "",
-            "urls": [
-                {
-                    "name": "",
-                    "url": ""
-                },
-                {
-                    "name": "",
-                    "url": ""
-                }
-            ],
-            "points": [
+            "url": "",
+            "projectDetails": [
                 "Developed and designed Smart Home Automation where we take existing appliances to online. It specifically focuses on the development of a user friendly IOT based home automation system that is able to control various components inside home via internet",
                 "System consists of mobile app which was developed in flutter where u can control the home applications through the app",
                 "Integration with Voice Assistants like Google Assistant, Alexa. Where u can control the home applications using the devices which support these voice assistants"
             ],
-            "technologies": [
+            "externalSources": [
+                {
+                    "name": "PlayStore",
+                    "link": "https://play.google.com/store/apps/details?id=com.aquelastudios.gymtracker"
+                },
+                {
+                    "name": "GitHub",
+                    "link": "https://github.com/vaishnavbusha/gymtracker"
+                }
+            ],
+            "technologiesUsed": [
                 "Flutter",
                 "IOT",
                 "Assembly Language"
-            ]
-        },
-        {
-            "name": "Music Recommendation System",
-            "type": "Geethanjali College of Engineering ",
-            "location": "Hyderabad, India",
-            "start_date": "August 2021",
-            "end_date": "January 2022",
-            "description": "",
-            "urls": [
-                {
-                    "name": "",
-                    "url": ""
-                },
-                {
-                    "name": "",
-                    "url": ""
-                }
-            ],
-            "points": [
-                "Developed an Emotion Recognition System using YOLO3 and TensorFlow where the model can recognise different types of emotions",
-                "Designed a web interface using Django framework",
-                "Capturing the users emotions using OpenCV and sending it the model feed. This CNN model here predicts the emotions from the images and then recommends songs based on these predicted emotions",
-                "Based on these prediction user is then recommened songs on websites like YouTube, Spotify, Amazon Prime Music using their API’s"
-            ],
-            "technologies": [
-                "open cv",
-                "tesorflow",
-                "keres",
-                "flask",
-                "ML",
-                "CNN"
             ]
         }
     ],
