@@ -1,0 +1,191 @@
+{
+  "personal_information": {
+    "name": "MALLARAPU PAVAN ABHINAV",
+    "email": "mpabhinav1426@gmail.com",
+    "phone": "+91-8919707712",
+    "location": "Alwal, Hyderabad, Telangana 500010",
+    "socials": [
+      {
+        "name": "LinkedIn",
+        "link": "https://www.linkedin.com/in/abhinav1426/"
+      }
+    ]
+  },
+  "education": [
+    {
+      "institution": "GEETANJALI COLLEGE OF ENGINEERING AND TECHNOLOGY",
+      "degree": "B.tech in Computer Science Engineering",
+      "location": "Hyderabad, Telangana",
+      "start_date": "June 2018",
+      "end_date": "June 2022",
+      "gpa": "7.34",
+      "gpa_out_off": "10"
+    },
+    {
+      "institution": "Narayana Junior College (ALWAL)",
+      "degree": "",
+      "location": "Hyderabad, Telangana",
+      "start_date": "August 2016",
+      "end_date": "May 2018",
+      "gpa": "71.7",
+      "gpa_out_off": "100"
+    },
+    {
+      "institution": "BETHANY ACADEMY",
+      "degree": "CBSE",
+      "location": "Hyderabad, Telangana",
+      "start_date": "May 2016",
+      "end_date": "",
+      "gpa": "8.3",
+      "gpa_out_off": "10"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Languages",
+      "data": [
+        "Python",
+        "Java",
+        "JavaScript",
+        "SQL",
+        "C++"
+      ]
+    },
+    {
+      "name": "Developer Tools",
+      "data": [
+        "Jenkins",
+        "Kubernetes",
+        "Splunk",
+        "AWS",
+        "Docker",
+        "VS Code",
+        "MS Office"
+      ]
+    },
+    {
+      "name": "Technologies/Frameworks",
+      "data": [
+        "Springboot",
+        "Asynchronous Java",
+        "React",
+        "MDF Framework",
+        "Arduino",
+        "Django"
+      ]
+    },
+    {
+      "name": "Project methodology Management tools",
+      "data": [
+        "Agile",
+        "Waterfall"
+      ]
+    },
+    {
+      "name": "Management Tools",
+      "data": [
+        "Jira",
+        "Bitbucket",
+        "Confluence"
+      ]
+    }
+  ],
+  "experiences": [
+    {
+      "designation": "Product Developer",
+      "companyName": "ADP",
+      "location": "Hyderabad, India",
+      "start_date": "June 2022",
+      "end_date": "Present",
+      "caption": "",
+      "points": [
+        "Resolved all security vulnerabilities of Smart Compliance Canada Application.",
+        "Designed and Developed Application gateway for Smart Compliance Canada which handles all the traffic coming to the application written in Asynchronous Java.",
+        "Developed services like Year End Tax Filing, ROE for Smart Compliance Canada.",
+        "Managed and Upgraded the Springboot versions and JDK versions for all the microservices for Smart Compliance Canada.",
+        "Reviewed the Designs and security vulnerabilities for Smart Compliance Canada.",
+        "Fixed critical bugs and Optimized the performance of all the microservices of Smart Compliance Canada",
+        "Developed Paygroup feature for the existing product services like wage payment, third party payments.",
+        "Worked session management for Smart Compliance Canada application",
+        "Fixed existing issues in the Core UI framework for the Smart Compliance Canada application"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "projectName": "Smart Home Automation",
+      "caption": "",
+      "location": "Geethanjali College of Engineering",
+      "start_date": "November 2021",
+      "end_date": "April 2022",
+      "url": "",
+      "projectDetails": [
+        "Developed and designed Smart Home Automation where we take existing appliances to online. It specifically focuses on the development of a user friendly IOT based home automation system that is able to control various components inside home via internet",
+        "System consists of mobile app which was developed in flutter where u can control the home applications through the app",
+        "Integration with Voice Assistants like Google Assistant, Alexa. Where u can control the home applications using the devices which support these voice assistants"
+      ],
+      "externalSources": [],
+      "technologiesUsed": [
+        "Flutter",
+        "IOT",
+        "Assembly Language"
+      ]
+    },
+    {
+      "projectName": "Music Recommendation System",
+      "caption": "",
+      "location": "Geethanjali College of Engineering",
+      "start_date": "August 2021",
+      "end_date": "January 2022",
+      "url": "",
+      "projectDetails": [
+        "Developed an Emotion Recognition System using YOLO3 and TensorFlow where the model can recognise different types of emotions",
+        "Designed a web interface using Django framework",
+        "Capturing the users emotions using OpenCV and sending it the model feed. This CNN model here predicts the emotions from the images and then recommends songs based on these predicted emotions",
+        "Based on these prediction user is then recommened songs on websites like YouTube, Spotify, Amazon Prime Music using their API’s"
+      ],
+      "externalSources": [],
+      "technologiesUsed": [
+        "YOLO3",
+        "TensorFlow",
+        "Django",
+        "OpenCV",
+        "CNN"
+      ]
+    }
+  ],
+  "extracurricular/achievements": [
+    {
+      "name": "Event Manager of Bhaswara 2021",
+      "type": "Event Manager",
+      "location": "GCET Hyd",
+      "date": "April 2021",
+      "description": ""
+    },
+    {
+      "name": "Event Manager of Bhaswara 2022",
+      "type": "Event Manager",
+      "location": "GCET Hyd",
+      "date": "April 2022",
+      "description": ""
+    },
+    {
+      "name": "Participated in HUMANOID ROBOT Hackathon",
+      "type": "Winner",
+      "location": "GCET Hyd",
+      "date": "November 2019",
+      "description": ""
+    },
+    {
+      "name": "Participated in Jumpstart Hackathon ADP",
+      "type": "Runner-Up",
+      "location": "ADP Hyd",
+      "date": "July 2022",
+      "description": ""
+    }
+  ],
+  "summary": "",
+  "certifications": [],
+  "awards": [],
+  "languages": []
+}
