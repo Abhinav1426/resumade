@@ -4,7 +4,7 @@ from openai import OpenAI
 
 from src.FileOperations import load_schema_file
 
-client = OpenAI(api_key="sk-dd26dc9fa4094176bc06ee35bbcd1272",base_url="https://api.deepseek.com")
+client = OpenAI(api_key="lols",base_url="https://api.deepseek.com")
 
 def parse_pdf_to_json(text):
     schema_file_path = "schema.json"
