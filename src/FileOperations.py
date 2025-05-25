@@ -17,7 +17,7 @@ def load_schema_file(file_path):
 
 def save_json_to_file(data):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = os.path.join(base_dir, '..', 'files',f'Extracted_schema_from_pdf_{timestamp}.json')
+    filename = os.path.join(base_dir, '..', 'files',f'Extracted_schema_from_file_{timestamp}.json')
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     print(f"✅ JSON saved to {filename}")
