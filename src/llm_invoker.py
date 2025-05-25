@@ -5,7 +5,7 @@ from src.FileOperations import load_schema_file
 from dotenv import load_dotenv, dotenv_values
 load_dotenv()
 
-def create_client(llm_provider):
+def create_client(llm_provider='deepseek'):
     if llm_provider is None:
         client = OpenAI(api_key=os.getenv('DEEPSEEK_API_KEY'), base_url=os.getenv('DEEPSEEK_URL'))
         model = "deepseek-chat"
@@ -22,7 +22,7 @@ def create_client(llm_provider):
             model = "deepseek-chat"
     return client , model
 
-def response_to_json(content,llm_provider):
+def response_to_json(content,llm_provider='deepseek'):
     if llm_provider is None:
         llm_provider = 'deepseek'
     match llm_provider:

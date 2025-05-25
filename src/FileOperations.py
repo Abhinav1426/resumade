@@ -1,8 +1,9 @@
 import json
+import os
 from datetime import datetime
-
 import fitz
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
 
 def load_schema_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -11,7 +12,7 @@ def load_schema_file(file_path):
 
 def save_json_to_file(data):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f'Extracted_schema_from_pdf_{timestamp}.json'
+    filename = os.path.join(base_dir, '..', 'files',f'Extracted_schema_from_pdf_{timestamp}.json')
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     print(f"✅ JSON saved to {filename}")
