@@ -49,7 +49,6 @@ def extract_text_from_pdf(path):
     doc.close()
     return full_text
 
-
 def extract_text_from_doc(path):
     doc = Document(path)
     full_text = ""
@@ -68,13 +67,11 @@ def extract_text_from_doc(path):
 
     return full_text
 
-
 def extract_text_from_file(path):
     if '.pdf' in path:
         return extract_text_from_pdf(path)
     elif '.doc' in path:
         return extract_text_from_doc(path)
-
 
 def clean_text(text):
     return '\n'.join([line.strip() for line in text.splitlines() if line.strip()])

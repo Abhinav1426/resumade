@@ -16,7 +16,17 @@ def scrape_with_selenium(url):
 
     return soup
 
+Your task is to help me secure more job interviews by optimizing my resume to highlight relevant skills and experiences. You will perform this task in a series of steps.
 
+<step1>Start by compiling all the current information from my resume. Gather details about my education, work experience, skills, certifications, and any relevant projects or volunteer work. Organize this information into categories for easy access and reference. Save this organized information in variable $resume_data.</step1>
+
+<step2>Using $resume_data, write a new resume. Begin with a clear header that includes my name, contact information, and professional title or area of expertise. Structure the content into sections: Professional Summary, Skills, Work Experience, Education, and Additional Information. Focus on clarity and relevance to my career goals.</step2>
+
+<step3>Modify my resume for each job application. Examine the job description carefully and identify keywords and skills that the employer emphasizes. Adjust my resume to highlight my qualifications that match these requirements. This customization shows employers my candidacy aligns well with the job expectations. Save the tailored resume in $custom_resume.</step3>
+
+<step4>Proofread my tailored resume for any errors in spelling, grammar, or formatting. Pay special attention to consistency in style and detail. Consider asking a friend or using professional services to review my resume. This ensures it is polished and professional. Store the final version of my resume in $final_resume.</step4>
+
+Begin by asking for to upload/paste the current resume and the type of job roles we're applying for.
 
 
 

@@ -17,9 +17,13 @@ def create_client(llm_provider='deepseek'):
         case 'deepseek':
             client = OpenAI(api_key=os.getenv('DEEPSEEK_API_KEY'), base_url=os.getenv('DEEPSEEK_URL'))
             model = "deepseek-chat"
+        case 'openai':
+            client = OpenAI(api_key=os.getenv('OPENAI_KEY'))
+            model = "gpt-4.1-nano-2025-04-14"
         case _:
             client = OpenAI(api_key=os.getenv('DEEPSEEK_API_KEY'), base_url=os.getenv('DEEPSEEK_URL'))
             model = "deepseek-chat"
+    print(f'Providers : {llm_provider} \n model : {model}')
     return client , model
 
 def response_to_json(content,llm_provider='deepseek'):
@@ -77,6 +81,9 @@ def parse_file_to_json(text):
     response = openAi_llm_caller(client,model,message)
     content = response.content
     return response_to_json(content,llm)
+
+def resume_builder_with_propmt(input_json,propmts=None):
+    schema_file_contents = load_schema_file("schema.json")
 
 
 
