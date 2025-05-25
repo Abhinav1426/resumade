@@ -1,6 +1,8 @@
 import json
 from datetime import datetime
 
+import fitz
+
 
 def load_schema_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -15,9 +17,9 @@ def save_json_to_file(data):
     print(f"✅ JSON saved to {filename}")
 
 
-def extract_text_from_pdf(pdf_path):
+def extract_text_from_doc(path):
     atext = ""
-    with fitz.open(pdf_path) as doc:
+    with fitz.open(path) as doc:
         for page_num, page in enumerate(doc, start=1):
             # Add plain visible text
             atext += page.get_text().strip() + "\n"
@@ -35,7 +37,7 @@ def extract_text_from_pdf(pdf_path):
 def clean_text(text):
     return '\n'.join([line.strip() for line in text.splitlines() if line.strip()])
 
-def pdfToText(pdf_path):
-    text = extract_text_from_pdf(pdf_path)
+def resumefileToText(pdf_path):
+    text = extract_text_from_doc(pdf_path)
     text = clean_text(text)
     return text

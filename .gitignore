@@ -1,2 +1,4 @@
 .idea/
 src/__pycache__/
+.env
+src/Extracted_schema_from_pdf_20250525_203215.json
