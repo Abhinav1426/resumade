@@ -1,4 +1,18 @@
-import fitz  # PyMuPDF
+import json
+from datetime import datetime
+
+
+def load_schema_file(file_path):
+    with open(file_path, 'r', encoding='utf-8') as f:
+        schema_file_contents = json.load(f)
+    return schema_file_contents
+
+def save_json_to_file(data):
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f'Extracted_schema_from_pdf_{timestamp}.json'
+    with open(filename, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+    print(f"✅ JSON saved to {filename}")
 
 
 def extract_text_from_pdf(pdf_path):
