@@ -3,7 +3,18 @@ import os
 from openai import OpenAI
 from src.FileOperations import load_schema_file
 from dotenv import load_dotenv, dotenv_values
+
+from src.Prompts import Prompts
+
 load_dotenv()
+
+def openAi_llm_caller(client,model,message):
+    response = client.chat.completions.create(
+        model=model,
+        messages=message,
+        stream=False
+    )
+    return response.choices[0].message
 
 def create_client(llm_provider='deepseek'):
     if llm_provider is None:
@@ -55,23 +66,13 @@ def response_to_json(content,llm_provider='deepseek'):
         case _:
             return json.loads(content)
 
-def openAi_llm_caller(client,model,message):
-    response = client.chat.completions.create(
-        model=model,
-        messages=message,
-        stream=False
-    )
-    return response.choices[0].message
+
 
 def parse_file_to_json(text):
     schema_file_contents = load_schema_file("schema.json")
-    schema_instruction = f"""
-    You are a helpful assistant. Extract data from unstructured text and return valid JSON following this schema:
-
-    {json.dumps(schema_file_contents, indent=2)}
-
-    Return only a valid JSON object. Do NOT include markdown, code blocks, or any explanation.
-    """
+    prompts = Prompts()
+    base_prompt = prompts.get_prompt("EXTRACT_TO_SCHEMA")
+    schema_instruction = base_prompt.replace("{SCHEMA}", json.dumps(schema_file_contents, indent=2))
     message = [
         {"role": "system", "content": schema_instruction},
         {"role": "user", "content": text}
@@ -84,6 +85,7 @@ def parse_file_to_json(text):
 
 def resume_builder_with_propmt(input_json,propmts=None):
     schema_file_contents = load_schema_file("schema.json")
+
 
 
 

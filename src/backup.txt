@@ -33,6 +33,11 @@ Begin by asking for to upload/paste the current resume and the type of job roles
 
 
 
+    buf = io.BytesIO()
+    build_pdf(buf)
+    buf.seek(0)
+    with open('Vaishnav_Busha_Resume.pdf', 'wb') as f:
+        f.write(buf.getvalue())
 
 
 
