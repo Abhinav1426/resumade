@@ -14,7 +14,7 @@ class ResumeBuilder:
         self.llm_provider = llm_provider
         self.client, self.model = self.create_client(llm_provider)
         self.prompts = Prompts()
-        self.schema_file_contents = FileOperations().load_schema_file("data/schema.json")
+        self.json_schema = FileOperations().load_schema_file("data/schema.json")
 
     @staticmethod
     def openAi_llm_caller(client,model,message):
@@ -79,7 +79,7 @@ class ResumeBuilder:
     def parse_file_to_json(self,text):
         prompts = Prompts()
         base_prompt = prompts.get_prompt("EXTRACT_TO_SCHEMA")
-        schema_instruction = base_prompt.replace("{SCHEMA}", json.dumps(self.schema_file_contents, indent=2))
+        schema_instruction = base_prompt.format(SCHEMA=json.dumps(self.json_schema, indent=2))
         message = [
             {"role": "system", "content": schema_instruction},
             {"role": "user", "content": text}
@@ -90,6 +90,30 @@ class ResumeBuilder:
         content = response.content
         return self.response_to_json(content, llm)
 
+    def build_resume_json(self, current_resume_json , job_description = None , user_prompt = None):
+        if job_description is None:
+            system_instruction = self.prompts.get_prompt("MASTER_PROMPT_WITH_JOB_DESCRIPTION")
+            prompt = self.prompts.get_prompt("USER_PROMPT_WITH_JOB_DESCRIPTION").format(
+                job_description=json.dumps(job_description, indent=2),
+                current_resume_json=json.dumps(current_resume_json, indent=2),
+                target_json_schema= json.dumps(self.json_schema, indent=2)
+            )
+        else:
+            system_instruction = self.prompts.get_prompt("MASTER_PROMPT_WITHOUT_JOB_DESCRIPTION")
+            prompt = self.prompts.get_prompt("USER_PROMPT_WITHOUT_JOB_DESCRIPTION").format(
+                current_resume_json=json.dumps(current_resume_json, indent=2),
+                target_json_schema=json.dumps(self.json_schema, indent=2)
+            )
+        if user_prompt is not None:
+            prompt = f"{prompt}\n\n{user_prompt}"
+        message = [
+            {"role": "system", "content": system_instruction},
+            {"role": "user", "content": prompt},
+        ]
+        client, model = self.create_client(self.llm_provider)
+        response = self.openAi_llm_caller(client, model, message)
+        content = response.content
+        return self.response_to_json(content, self.llm_provider)
 
 
 

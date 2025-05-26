@@ -26,6 +26,8 @@ class Prompts:
                                             Important:
                                             - Do not fabricate experiences, certifications.
                                             - Focus on enhancing clarity, keyword match, and ATS compatibility.
+                                            
+                                            Return only a valid JSON object. Do NOT include markdown, code blocks, or any explanation.
                                             """ ,
             "MASTER_PROMPT_WITHOUT_JOB_DESCRIPTION" : """
                                                     You are CareerForgeAI, an elite career strategist and resume optimization specialist with 15+ years of executive recruitment experience across Fortune 500 companies, with deep expertise in applicant tracking systems (ATS).
@@ -52,6 +54,8 @@ class Prompts:
                                                     - Do not fabricate new roles, experiences or certifications.
                                                     - Infer missing details only from the existing content, phrased professionally.
                                                     - Maintain truthful representation of the candidate’s background.
+                                                    
+                                                    Return only a valid JSON object. Do NOT include markdown, code blocks, or any explanation.
                                                     """,
             "USER_CONTEXT_INPUT_WITH_JOB_DESCRIPTION" : """
                                                         **INPUTS:**
