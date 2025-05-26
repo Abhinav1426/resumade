@@ -1,22 +1,21 @@
 import io
 from reportlab.lib import colors
-from reportlab.platypus import (SimpleDocTemplate, ListFlowable, ListItem, HRFlowable, Spacer)
+from reportlab.platypus import (SimpleDocTemplate,ListFlowable, ListItem, HRFlowable, Spacer)
 from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
-from reportlab.platypus import Paragraph, Table, TableStyle
+from reportlab.platypus import  Paragraph, Table, TableStyle
 from typing import Optional, List
-
 
 class JsonToPDFBuilder:
     def __init__(self):
         # Register fonts
-        pdfmetrics.registerFont(TTFont('CMR10', './fonts/cmunrm.ttf'))  # Roman
-        pdfmetrics.registerFont(TTFont('CMB10', './fonts/cmunbx.ttf'))  # Bold
-        pdfmetrics.registerFont(TTFont('CMIT10', './fonts/cmunti.ttf'))  # Italic
+        pdfmetrics.registerFont(TTFont('CMR10', './fonts/cmunrm.ttf'))   # Roman
+        pdfmetrics.registerFont(TTFont('CMB10', './fonts/cmunbx.ttf'))   # Bold
+        pdfmetrics.registerFont(TTFont('CMIT10', './fonts/cmunti.ttf'))   # Italic
         pdfmetrics.registerFont(TTFont('BodoniMT', './fonts/bodoni-mt-regular.ttf'))
         self.story = []
         self.styles = self.resumeStyling()
@@ -33,20 +32,19 @@ class JsonToPDFBuilder:
             'awards',
             'certifications',
         ]
-
     @staticmethod
     def safe_strip(value):
         """Return stripped string if not None, else empty string."""
         return value.strip() if isinstance(value, str) else ''
 
-    def calculateTableColumnSplit(self, doc):
+    def calculateTableColumnSplit(self,doc):
         # Compute 2:1 column widths
         page_w, _ = letter
         usable_w = page_w - doc.leftMargin - doc.rightMargin
         left_col = usable_w * 1.94 / 3
         right_col = usable_w * 1 / 3
         return left_col, right_col
-
+    
     def resumeStyling(self):
         large = 12
         small = 11
@@ -59,7 +57,7 @@ class JsonToPDFBuilder:
         self.styles['BodyText'].leading = small
         self.styles['BodyText'].spaceAfter = 0
         self.styles['BodyText'].alignment = TA_JUSTIFY
-
+    
         # —— Name ——
         self.styles.add(ParagraphStyle(
             name='Name',
@@ -77,9 +75,10 @@ class JsonToPDFBuilder:
             leading=10,
             alignment=TA_CENTER,
             spaceAfter=8,
-
+    
         ))
-
+    
+    
         # —— Contact line ——
         self.styles.add(ParagraphStyle(
             name='HeaderInfo',
@@ -89,19 +88,19 @@ class JsonToPDFBuilder:
             alignment=1,
             spaceAfter=12
         ))
-
+    
         # —— Section heading (bold, uppercase) ——
-        self.styles.add(ParagraphStyle(
+        self. styles.add(ParagraphStyle(
             name='SectionHeading',
             fontName='CMB10',
             fontSize=large,
             leading=large,
-
+    
             spaceAfter=5,
             alignment=0,
             uppercase=True
         ))
-
+    
         # —— Education table styles ——
         self.styles.add(ParagraphStyle(
             name='EduInst',
@@ -131,7 +130,7 @@ class JsonToPDFBuilder:
             alignment=2,  # right
             spaceAfter=1
         ))
-
+    
         # —— Experience table styles ——
         self.styles.add(ParagraphStyle(
             name='ExpTitle',
@@ -145,7 +144,8 @@ class JsonToPDFBuilder:
             fontName='CMIT10',
             fontSize=xSmall,
             leading=xSmall,
-
+    
+    
         ))
         self.styles.add(ParagraphStyle(
             name='ExpDate',
@@ -163,7 +163,7 @@ class JsonToPDFBuilder:
             alignment=2,  # right
             spaceAfter=0
         ))
-
+    
         # —— Extracurricular / Achievements styles ——
         self.styles.add(ParagraphStyle(
             name='ExtraTitle',
@@ -201,12 +201,12 @@ class JsonToPDFBuilder:
             fontSize=xSmall,
             leading=small,
             spaceBefore=2,
-
+    
             spaceAfter=0,
         ))
         return self.styles
-
-    def render_personal_info(self, data):
+    
+    def render_personal_info(self,data):
         """
         Renders:
          - name (required)
@@ -220,21 +220,23 @@ class JsonToPDFBuilder:
         email = self.safe_strip(data.get('email', ''))
         if not (name and location and phone and email):
             return
-
+    
         self.story.append(Paragraph(name, self.styles['Name']))
         self.story.append(Paragraph(location, self.styles['headerLoc']))
         SEP = '&nbsp;&nbsp;&nbsp;&nbsp;'
         parts = []
-
+    
+    
+    
         # Phone
         parts.append(f'<img src="./images/phone.png" width="10" height="10"/>&nbsp;{phone}')
-
+    
         # Email
         parts.append(
             f'<img src="./images/mail.png" width="10" height="10"/>&nbsp;'
             f'<a href="mailto:{email}"><u>{email}</u></a>'
         )
-
+    
         # Optional socials
         for soc in data.get('socials', []):
             name = self.safe_strip(soc.get('name', ''))
@@ -246,10 +248,10 @@ class JsonToPDFBuilder:
                 f'<img src="{icon}" width="10" height="10"/>&nbsp;'
                 f'<a href="{link}"><u>{name}</u></a>'
             )
-
+    
         self.story.append(Paragraph(SEP.join(parts), self.styles['HeaderInfo']))
-
-    def render_education_details(self, edus, doc):
+    
+    def render_education_details(self,edus,doc):
         """
         Renders each education entry if it has all required fields:
           institution, degree, location, start_date, gpa, gpa_out_off
@@ -257,11 +259,11 @@ class JsonToPDFBuilder:
         """
         if not edus:
             return
-
+    
         self.story.append(Paragraph('Education', self.styles['SectionHeading']))
         self.story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
         left_col, right_col = self.calculateTableColumnSplit(doc)
-
+    
         for ed in edus:
             inst = self.safe_strip(ed.get('institution', ''))
             deg = self.safe_strip(ed.get('degree', ''))
@@ -271,24 +273,24 @@ class JsonToPDFBuilder:
             out_off = self.safe_strip(ed.get('gpa_out_off', ''))
             if not (inst and deg and loc and start and gpa and out_off):
                 continue
-
+    
             # Optional end date
             end = self.safe_strip(ed.get('end_date', ''))
             span = f"{start} – {end}" if end else start
             degree_text = f"{deg}, GPA {gpa}/{out_off}"
-
+    
             tbl = Table([
                 [Paragraph(inst, self.styles['EduInst']), Paragraph(span, self.styles['EduDate'])],
                 [Paragraph(degree_text, self.styles['EduDegree']), Paragraph(loc, self.styles['EduLoc'])]
             ], colWidths=[left_col, right_col])
             tbl.setStyle(TableStyle([
-                ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-                ('LEFTPADDING', (0, 0), (-1, -1), 0), ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+                ('VALIGN',(0,0),(-1,-1),'TOP'),
+                ('LEFTPADDING',(0,0),(-1,-1),0), ('RIGHTPADDING',(0,0),(-1,-1),0),
             ]))
-
+    
             self.story.append(tbl)
             self.story.append(Spacer(1, 5))
-
+    
         self.story.append(Spacer(1, 5))
 
     def render_experiences_details(self, exps, doc):
@@ -369,7 +371,6 @@ class JsonToPDFBuilder:
 
         # final bottom spacer
         self.story.append(Spacer(1, 5))
-
     # def render_experiences_details(self,exps,doc):
     #     """
     #     Renders each experience entry if it has:
@@ -425,64 +426,66 @@ class JsonToPDFBuilder:
     #         self.story.append(Spacer(1, 5))
     #
     #     self.story.append(Spacer(1, 5))
-
-    def render_skills_details(self, data):
+    
+    def render_skills_details(self,data):
         """
         Renders each skill category if it has:
           name, data (non-empty list)
         """
         if not data:
             return
-
+    
         self.story.append(Paragraph('Technical Skills', self.styles['SectionHeading']))
         self.story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
-
+    
         for sk in data:
-            name = self.safe_strip(sk.get('name', ''))
+            name = self.safe_strip(sk.get('name',''))
             items = sk.get('data', [])
             if not (name and items):
                 continue
-
+    
             skills_text = ', '.join(items)
             self.story.append(
                 Paragraph(f'<font name="CMB10">{name}:</font> {skills_text}', self.styles['BodyText'])
             )
             # self.story.append(Spacer(1, 2))
-
+    
         self.story.append(Spacer(1, 8))
 
-    def render_extras_details(self, data, doc):
+    
+    def render_extras_details(self,data, doc):
         """
         Renders each extracurricular/achievement if it has:
           name, type, location, date, description
         """
         if not data:
             return
-
+    
         self.story.append(Paragraph('Extracurricular / Achievements', self.styles['SectionHeading']))
         self.story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
         left_col, right_col = self.calculateTableColumnSplit(doc)
-
+    
         for item in data:
-            name = self.safe_strip(item.get('name', ''))
-            type_ = self.safe_strip(item.get('type', ''))
-            loc = self.safe_strip(item.get('location', ''))
-            date = self.safe_strip(item.get('date', ''))
-            desc = self.safe_strip(item.get('description', ''))
+            name = self.safe_strip(item.get('name',''))
+            type_ = self.safe_strip(item.get('type',''))
+            loc = self.safe_strip(item.get('location',''))
+            date = self.safe_strip(item.get('date',''))
+            desc = self.safe_strip(item.get('description',''))
             if not (name and type_ and loc and date and desc):
                 continue
-
+    
+    
             tbl = Table([
                 [Paragraph(name, self.styles['ExtraTitle']), Paragraph(date, self.styles['ExtraDate'])],
                 [Paragraph(desc, self.styles['ExtraDesc']), Paragraph(loc, self.styles['ExtraLoc'])]
             ], colWidths=[left_col, right_col])
             tbl.setStyle(TableStyle([
-                ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-                ('LEFTPADDING', (0, 0), (-1, -1), 0), ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+                ('VALIGN',(0,0),(-1,-1),'TOP'),
+                ('LEFTPADDING',(0,0),(-1,-1),0), ('RIGHTPADDING',(0,0),(-1,-1),0),
             ]))
             self.story.append(tbl)
             self.story.append(Spacer(1, 2))
-
+    
         self.story.append(Spacer(1, 5))
 
     def render_projects_details(self, data, doc):
@@ -674,120 +677,123 @@ class JsonToPDFBuilder:
     #         self.story.append(Spacer(1, 5))
     #
     #     self.story.append(Spacer(1, 5))
-
-    def render_awards_details(self, data, doc):
+    
+    def render_awards_details(self,data, doc):
         """
         Renders each award if it has:
           name, type, location, date, description
         """
         if not data:
             return
-
+    
         self.story.append(Paragraph('Awards', self.styles['SectionHeading']))
         self.story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
         left_col, right_col = self.calculateTableColumnSplit(doc)
-
+    
         for item in data:
-            name = self.safe_strip(item.get('name', ''))
-            type_ = self.safe_strip(item.get('type', ''))
-            loc = self.safe_strip(item.get('location', ''))
-            date = self.safe_strip(item.get('date', ''))
-            desc = self.safe_strip(item.get('description', ''))
+            name = self.safe_strip(item.get('name',''))
+            type_ = self.safe_strip(item.get('type',''))
+            loc = self.safe_strip(item.get('location',''))
+            date = self.safe_strip(item.get('date',''))
+            desc = self.safe_strip(item.get('description',''))
             if not (name and type_ and loc and date and desc):
                 continue
-
+    
             location_text = f"{type_}, {loc}"
             tbl = Table([
                 [Paragraph(name, self.styles['ExtraTitle']), Paragraph(date, self.styles['ExtraDate'])],
                 [Paragraph(desc, self.styles['ExtraDesc']), Paragraph(location_text, self.styles['ExtraLoc'])]
             ], colWidths=[left_col, right_col])
             tbl.setStyle(TableStyle([
-                ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-                ('LEFTPADDING', (0, 0), (-1, -1), 0), ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+                ('VALIGN',(0,0),(-1,-1),'TOP'),
+                ('LEFTPADDING',(0,0),(-1,-1),0), ('RIGHTPADDING',(0,0),(-1,-1),0),
             ]))
             self.story.append(tbl)
             self.story.append(Spacer(1, 2))
-
+    
         self.story.append(Spacer(1, 5))
-
-    def render_languages(self, data):
+    
+    def render_languages(self,data):
         """
         Renders each language if it has:
           language, proficiency
         """
         if not data:
             return
-
+    
         self.story.append(Paragraph('Languages', self.styles['SectionHeading']))
         self.story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
-
+    
         for l in data:
-            lang = self.safe_strip(l.get('language', ''))
-            prof = self.safe_strip(l.get('proficiency', ''))
+            lang = self.safe_strip(l.get('language',''))
+            prof = self.safe_strip(l.get('proficiency',''))
             if not (lang and prof):
                 continue
             self.story.append(Paragraph(f'<font name="CMB10">{lang}:</font> {prof}', self.styles['BodyText']))
-
+    
+    
         self.story.append(Spacer(1, 5))
-
-    def render_summary_details(self, data):
+    
+    def render_summary_details(self,data):
         """
         Renders summary only if non-empty (optional).
         """
         text = self.safe_strip((data or ''))
         if not text:
             return
-
+    
         self.story.append(Paragraph('Summary', self.styles['SectionHeading']))
         self.story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
         self.story.append(Paragraph(text, self.styles['BodyText']))
         self.story.append(Spacer(1, 10))
-
-    def render_certifications(self, data, doc):
+    
+    def render_certifications(self,data, doc):
         """
         Renders each certification if it has:
           name, issuing_organization, issue_date, expiration_date, credential_id, url
         """
         if not data:
             return
-
+    
         self.story.append(Paragraph('Certifications', self.styles['SectionHeading']))
         self.story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
         left_col, right_col = self.calculateTableColumnSplit(doc)
-
+    
         for item in data:
-            name = self.safe_strip(item.get('name', ''))
-            org = self.safe_strip(item.get('issuing_organization', ''))
-            issue = self.safe_strip(item.get('issue_date', ''))
-            exp = self.safe_strip(item.get('expiration_date', ''))
-            cred = self.safe_strip(item.get('credential_id', ''))
-            url = self.safe_strip(item.get('url', ''))
+            name  = self.safe_strip(item.get('name',''))
+            org   = self.safe_strip(item.get('issuing_organization',''))
+            issue = self.safe_strip(item.get('issue_date',''))
+            exp   = self.safe_strip(item.get('expiration_date',''))
+            cred  = self.safe_strip(item.get('credential_id',''))
+            url   = self.safe_strip(item.get('url',''))
             if not (name and org and issue and exp and cred and url):
                 continue
-
+    
             date_span = f"{issue} – {exp}"
             cred_cell = Paragraph(f'<a href="{url}"><u>{cred}</u></a>', self.styles['ExtraDesc'])
-
+    
             tbl = Table([
                 [Paragraph(name, self.styles['ExtraTitle']), Paragraph(date_span, self.styles['ExtraDate'])],
                 [cred_cell, Paragraph(org, self.styles['ExtraLoc'])]
             ], colWidths=[left_col, right_col])
             tbl.setStyle(TableStyle([
-                ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-                ('LEFTPADDING', (0, 0), (-1, -1), 0), ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+                ('VALIGN',(0,0),(-1,-1),'TOP'),
+                ('LEFTPADDING',(0,0),(-1,-1),0), ('RIGHTPADDING',(0,0),(-1,-1),0),
             ]))
             self.story.append(tbl)
             self.story.append(Spacer(1, 2))
-
+    
         self.story.append(Spacer(1, 5))
+    
 
-    def build_pdf(self, buffer, data, order: Optional[List[str]] = None):
+    
+    def build_pdf(self,buffer,data, order: Optional[List[str]] = None):
         author_name = data['personal_information']['name']
         doc = SimpleDocTemplate(
             buffer,
             pagesize=letter,
-            leftMargin=0.3 * inch, rightMargin=0.3 * inch,
-            topMargin=0.3 * inch, bottomMargin=0.3 * inch
+            leftMargin=0.3*inch, rightMargin=0.3*inch,
+            topMargin=0.3*inch, bottomMargin=0.3*inch
         )
 
         styles = self.resumeStyling()
@@ -815,18 +821,21 @@ class JsonToPDFBuilder:
                 raise ValueError(f"Unknown section key: {key!r}")
             renderer()
 
+    
+    
         def _set_metadata(canvas, document):
             canvas.setAuthor(author_name)
             canvas.setTitle(f"{author_name} Resume")
-
+    
         doc.build(
             self.story,
             onFirstPage=_set_metadata,
             onLaterPages=_set_metadata
         )
 
-    def build(self, json_data, order: Optional[List[str]] = None):
+
+    def build(self,json_data, order: Optional[List[str]] = None):
         buf = io.BytesIO()
-        self.build_pdf(buf, json_data, order)
+        self.build_pdf(buf, json_data,order)
         buf.seek(0)
         return buf.getvalue()  # Return the PDF content as bytes
