@@ -19,12 +19,18 @@ class FileOperations:
             schema_file_contents = json.load(f)
         return schema_file_contents
 
-    def save_json_to_file(self, data):
+    def save_json_to_file(self, data , file_name='temp'):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = os.path.join(self.base_dir, '..', 'files',f'Extracted_schema_from_file_{timestamp}.json')
+        filename = os.path.join(self.base_dir, '..', 'files',f'{file_name}_file_{timestamp}.json')
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
         print(f"✅ JSON saved to {filename}")
+
+    def save_pdf_to_file(self, bytes, file_name='temp'):
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = os.path.join(self.base_dir, '..', 'files', f'{file_name}_file_{timestamp}.pdf')
+        with open(filename, 'wb') as f:
+            f.write(bytes)
 
     def extract_text_from_pdf(self, path):
         doc = fitz.open(path)

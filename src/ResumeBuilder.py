@@ -60,6 +60,7 @@ class ResumeBuilder:
                     parsed_json = json.loads(content)
                     return parsed_json
                 except json.JSONDecodeError as e:
+                    print("type of content:", type(content))
                     print("❌ Failed to parse JSON. Here's the raw content:\n", content)
                     raise e
             case 'deepseek':
@@ -71,6 +72,7 @@ class ResumeBuilder:
                     parsed_json = json.loads(content)
                     return parsed_json
                 except json.JSONDecodeError as e:
+                    print("type of content:", type(content))
                     print("❌ Failed to parse JSON. Here's the raw content:\n", content)
                     raise e
             case _:
@@ -93,14 +95,14 @@ class ResumeBuilder:
     def build_resume_json(self, current_resume_json , job_description = None , user_prompt = None):
         if job_description is None:
             system_instruction = self.prompts.get_prompt("MASTER_PROMPT_WITH_JOB_DESCRIPTION")
-            prompt = self.prompts.get_prompt("USER_PROMPT_WITH_JOB_DESCRIPTION").format(
+            prompt = self.prompts.get_prompt("USER_CONTEXT_INPUT_WITH_JOB_DESCRIPTION").format(
                 job_description=json.dumps(job_description, indent=2),
                 current_resume_json=json.dumps(current_resume_json, indent=2),
                 target_json_schema= json.dumps(self.json_schema, indent=2)
             )
         else:
             system_instruction = self.prompts.get_prompt("MASTER_PROMPT_WITHOUT_JOB_DESCRIPTION")
-            prompt = self.prompts.get_prompt("USER_PROMPT_WITHOUT_JOB_DESCRIPTION").format(
+            prompt = self.prompts.get_prompt("USER_CONTEXT_INPUT_WITHOUT_JOB_DESCRIPTION").format(
                 current_resume_json=json.dumps(current_resume_json, indent=2),
                 target_json_schema=json.dumps(self.json_schema, indent=2)
             )
@@ -110,9 +112,11 @@ class ResumeBuilder:
             {"role": "system", "content": system_instruction},
             {"role": "user", "content": prompt},
         ]
+        print(f"Message: {message}")
         client, model = self.create_client(self.llm_provider)
         response = self.openAi_llm_caller(client, model, message)
         content = response.content
+        print(f"Response Content: {content}")
         return self.response_to_json(content, self.llm_provider)
 
 
