@@ -7,7 +7,10 @@ from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Table, TableStyle,
     ListFlowable, ListItem, HRFlowable, Spacer
 )
-from reportlab.lib.enums import TA_JUSTIFY
+import json
+
+from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
+
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -51,8 +54,19 @@ def resumeStyling():
         fontSize=huge,
         leading=10,
         alignment=1,
-        spaceAfter=18,
+        spaceAfter=16,
     ))
+    # —— Name ——
+    styles.add(ParagraphStyle(
+        name='headerLoc',
+        fontName='CMR10',
+        fontSize=small,
+        leading=10,
+        alignment=TA_CENTER,
+        spaceAfter=8,
+
+    ))
+
 
     # —— Contact line ——
     styles.add(ParagraphStyle(
@@ -80,20 +94,20 @@ def resumeStyling():
     styles.add(ParagraphStyle(
         name='EduInst',
         fontName='CMB10',
-        fontSize=small,
+        fontSize=xSmall,
         leading=8,
     ))
     styles.add(ParagraphStyle(
         name='EduDegree',
         fontName='CMIT10',
         fontSize=xSmall,
-        leading=small,
+        leading=8,
         spaceAfter=0
     ))
     styles.add(ParagraphStyle(
         name='EduDate',
         fontName='CMB10',
-        fontSize=small,
+        fontSize=xSmall,
         leading=8,
         alignment=2  # right
     ))
@@ -101,7 +115,7 @@ def resumeStyling():
         name='EduLoc',
         fontName='CMIT10',
         fontSize=xSmall,
-        leading=9,
+        leading=8,
         alignment=2,  # right
         spaceAfter=1
     ))
@@ -118,8 +132,9 @@ def resumeStyling():
         name='ExpRole',
         fontName='CMIT10',
         fontSize=xSmall,
-        leading=8,
-        spaceAfter=0
+        leading=xSmall,
+
+
     ))
     styles.add(ParagraphStyle(
         name='ExpDate',
@@ -188,195 +203,275 @@ from reportlab.platypus import Image, Paragraph, Table, TableStyle
 
 # 1) Make sure your 'Name' style is left-aligned:
 
+def render_personal_info(data, story, styles):
+    """
+    Renders:
+     - name (required)
+     - location (required)
+     - phone, email (required)
+     - socials (optional)
+    """
+    name = data.get('name', '').strip()
+    location = data.get('location', '').strip()
+    phone = data.get('phone', '').strip()
+    email = data.get('email', '').strip()
+    if not (name and location and phone and email):
+        return
 
-
-def personalInformationBlock(story, styles):
-    # — Name —
-    story.append(Paragraph('BUSHA VAISHNAV', styles['Name']))
-
-    # define a 4-space separator
+    story.append(Paragraph(name, styles['Name']))
+    story.append(Paragraph(location, styles['headerLoc']))
     SEP = '&nbsp;&nbsp;&nbsp;&nbsp;'
-
-    contact_html = SEP.join([
-        # phone
-        '<img src="phone.png" width="10" height="10"/>'
-        '&nbsp;+91-8919707712',
-        # email
-        '<img src="mail.png" width="10" height="10"/>'
-        '&nbsp;<a href="mailto:mpabhinav1426@gmail.com">'
-          '<font color="blue">mpabhinav1426@gmail.com</font>'
-        '</a>',
-        # linkedin
-        '<img src="linkedin.png" width="10" height="10"/>'
-        '&nbsp;<a href="https://www.linkedin.com/in/abhinav1426/">'
-          '<font color="blue">linkedin.com/in/abhinav1426/</font>'
-        '</a>'
-    ])
-
-    story.append(Paragraph(contact_html, styles['HeaderInfo']))
-    # — your spaced name as before —
-    # story.append(Paragraph('BUSHA VAISHNAV', styles['Name']))
-    # # — Name (now flush left) —
-    # story.append(Paragraph('BUSHA VAISHNAV', styles['Name']))
-    #
-    # # — Three icon+text pairs —
-    # items = [
-    #     ('phone.png', '+91-8919707712', None),
-    #     ('mail.png', 'mpabhinav1426@gmail.com', 'mailto:mpabhinav1426@gmail.com'),
-    #     ('linkedin.png', 'linkedin.com/in/abhinav1426/', 'https://www.linkedin.com/in/abhinav1426/'),
-    # ]
-    #
-    # # Build each inner 1×2 (icon + text)
-    # inners = []
-    # for icon_file, text, href in items:
-    #     icon = Image(icon_file, width=10, height=10)
-    #     txt = f'<a href="{href}"><font color="blue">{text}</font></a>' if href else text
-    #     para = Paragraph(txt, styles['HeaderInfo'])
-    #
-    #     inner = Table([[icon, para]], colWidths=[10, None])
-    #     inner.setStyle(TableStyle([
-    #         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-    #         ('ALIGN', (0, 0), (0, 0), 'RIGHT'),
-    #         ('ALIGN', (1, 0), (1, 0), 'LEFT'),
-    #         ('RIGHTPADDING', (0, 0), (0, 0), 2),  # 2pt gap icon→text
-    #         ('LEFTPADDING', (0, 0), (-1, -1), 0),
-    #         ('TOPPADDING', (0, 0), (-1, -1), 0),
-    #         ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
-    #     ]))
-    #     inners.append(inner)
-    #
-    # # Compute each outer cell = 1/3 page width (minus ½" margins)
-    # page_w = letter[0]
-    # usable_w = page_w - 2 * (0.5 * inch)
-    # third_width = usable_w / 3
-    #
-    # # 2) Outer table flush-left, with all cells left-aligned
-    # outer = Table([inners],
-    #               colWidths=[third_width] * 3,
-    #               hAlign='LEFT')
-    # outer.setStyle(TableStyle([
-    #     ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-    #     ('ALIGN', (0, 0), (-1, -1), 'LEFT'),  # everything left
-    #     ('LEFTPADDING', (0, 0), (-1, -1), 0),
-    #     ('RIGHTPADDING', (0, 0), (-1, -1), 0),
-    #     ('TOPPADDING', (0, 0), (-1, -1), 0),
-    #     ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
-    # ]))
-    #
-    # story.append(outer)
+    parts = []
 
 
-def education(story,styles,doc):
-    # —— Education ——
+
+    # Phone
+    parts.append(f'<img src="phone.png" width="10" height="10"/>&nbsp;{phone}')
+
+    # Email
+    parts.append(
+        f'<img src="mail.png" width="10" height="10"/>&nbsp;'
+        f'<a href="mailto:{email}"><u>{email}</u></a>'
+    )
+
+    # Optional socials
+    for soc in data.get('socials', []):
+        name = soc.get('name', '').strip()
+        link = soc.get('link', '').strip()
+        if not (name and link):
+            continue
+        icon = f'{name.lower()}.png'
+        parts.append(
+            f'<img src="{icon}" width="10" height="10"/>&nbsp;'
+            f'<a href="{link}"><u>{name}</u></a>'
+        )
+
+    story.append(Paragraph(SEP.join(parts), styles['HeaderInfo']))
+
+
+# def render_personal_info(data, story, styles):
+#     # — Name —
+#     story.append(Paragraph(data['name'], styles['Name']))
+#     SEP = '&nbsp;&nbsp;&nbsp;&nbsp;'
+#
+#     parts = [
+#         f'<img src="phone.png" width="10" height="10"/>&nbsp;{data["phone"]}',
+#         f'<img src="mail.png" width="10" height="10"/>&nbsp;'
+#         f'<a href="mailto:{data["email"]}"><u>{data["email"]}</u></a>',
+#     ]
+#
+#     # add socials with icons, but only if link is non-empty
+#     for soc in data.get('socials', []):
+#         link = soc.get('link', '').strip()
+#         if not link:
+#             continue
+#         icon = soc['name'].lower() + '.png'
+#         parts.append(
+#             f'<img src="{icon}" width="10" height="10"/>&nbsp;'
+#             f'<a href="{link}"><u>{soc["name"]}</u></a>'
+#         )
+#
+#     story.append(
+#         Paragraph(SEP.join(parts), styles['HeaderInfo'])
+#     )
+
+
+
+
+
+def render_education_details(edus, story, styles, doc):
+    """
+    Renders each education entry if it has all required fields:
+      institution, degree, location, start_date, gpa, gpa_out_off
+    end_date is optional.
+    """
+    if not edus:
+        return
+
     story.append(Paragraph('Education', styles['SectionHeading']))
     story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
-
-    edu_data = [
-        (
-            'University of North Texas, Denton',
-            'Masters in Data Science, GPA 4.0/4.0',
-            'August 2024 – May 2026',
-            'Denton, Texas'
-        ),
-        (
-            'Anurag Group of Institutions (now Anurag University)',
-            "Bachelor’s Degree (B.Tech) in Computer Science and Engineering, GPA 8.8/10",
-            'July 2018 – August 2022',
-            'Hyderabad, Telangana'
-        )
-    ]
-    left_col,right_col = calculateTableColumnSplit(doc)
-    for inst, degree, dates, loc in edu_data:
-        table_data = [
-            [Paragraph(inst, styles['EduInst']),
-             Paragraph(dates, styles['EduDate'])],
-            [Paragraph(degree, styles['EduDegree']),
-             Paragraph(loc, styles['EduLoc'])]
-        ]
-        tbl = Table(table_data, colWidths=[left_col, right_col], )
-        tbl.setStyle(TableStyle([
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-            ('LEFTPADDING', (0, 0), (-1, -1), 0),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 0),
-        ]))
-        story.append(tbl)
-        story.append(Spacer(1, 1.6))
-    story.append(Spacer(1, 2.4,))
-def experiences(story,styles,doc):
-
-    # —— Experience ——
-    story.append(Paragraph('Experience', styles['SectionHeading']))
-    story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
-
-    # ensure you have left_col/right_col already calculated above
-    experiences = [
-        {
-            'title': 'Acintyo Tech Innovations Pvt. Ltd.',
-            'designation': 'Software Engineer',
-            'span': 'December 2023 – June 2024',
-            'location': 'Hyderabad, India',
-            'bullets': [
-                'As a flutter developer, developed healthcare based eCommerce B2B2C app. This app enables retailers in selling their goods to consumers and also to buy products from well-known wholesalers such as Acintyo.',
-                'Responsible for developing an app for medical consultations…',
-                'Mitigated resources … by developing both iOS and Android apps…'
-            ]
-        },
-        {
-            'title': 'Acintyo Tech Innovations Pvt. Ltd.',
-            'designation': 'Software Engineer',
-            'span': 'December 2023 – June 2024',
-            'location': 'Hyderabad, India',
-            'bullets': [
-                'As a flutter developer, developed healthcare based eCommerce B2B2C app. This app enables retailers in selling their goods to consumers and also to buy products from well-known wholesalers such as Acintyo.',
-                'Responsible for developing an app for medical consultations…',
-                'Mitigated resources … by developing both iOS and Android apps…'
-            ]
-        },
-        # add more entries as needed…
-        ]
     left_col, right_col = calculateTableColumnSplit(doc)
-    for e in experiences:
-        # 2×2 header table
+
+    for ed in edus:
+        inst = ed.get('institution', '').strip()
+        deg = ed.get('degree', '').strip()
+        loc = ed.get('location', '').strip()
+        start = ed.get('start_date', '').strip()
+        gpa = ed.get('gpa', '').strip()
+        out_off = ed.get('gpa_out_off', '').strip()
+        if not (inst and deg and loc and start and gpa and out_off):
+            continue
+
+        # Optional end date
+        end = ed.get('end_date', '').strip()
+        span = f"{start} – {end}" if end else start
+        degree_text = f"{deg}, GPA {gpa}/{out_off}"
+
         tbl = Table([
-            [Paragraph(e['title'], styles['ExpTitle']),
-             Paragraph(e['span'], styles['ExpDate'])],
-            [Paragraph(e['designation'], styles['ExpRole']),
-             Paragraph(e['location'], styles['ExpLoc'])]
+            [Paragraph(inst, styles['EduInst']), Paragraph(span, styles['EduDate'])],
+            [Paragraph(degree_text, styles['EduDegree']), Paragraph(loc, styles['EduLoc'])]
         ], colWidths=[left_col, right_col])
         tbl.setStyle(TableStyle([
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-            ('LEFTPADDING', (0, 0), (-1, -1), 0),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+            ('VALIGN',(0,0),(-1,-1),'TOP'),
+            ('LEFTPADDING',(0,0),(-1,-1),0), ('RIGHTPADDING',(0,0),(-1,-1),0),
+        ]))
+
+        story.append(tbl)
+        story.append(Spacer(1, 5))
+
+    story.append(Spacer(1, 5))
+#
+# def render_education_details(edus, story, styles, doc):
+#     story.append(Paragraph('Education', styles['SectionHeading']))
+#     story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
+#     left_col, right_col = calculateTableColumnSplit(doc)
+#     for ed in edus:
+#         degree = f"{ed['degree']}, GPA {ed['gpa']}/{ed['gpa_out_off']}"
+#         span = f"{ed.get('start_date','')} – {ed['end_date']}"
+#         tbl = Table([
+#             [Paragraph(ed['institution'], styles['EduInst']),
+#              Paragraph(span, styles['EduDate'])],
+#             [Paragraph(degree, styles['EduDegree']),
+#              Paragraph(ed['location'], styles['EduLoc'])]
+#         ], colWidths=[left_col, right_col])
+#         tbl.setStyle(TableStyle([
+#             ('VALIGN',(0,0),(-1,-1),'TOP'),
+#             ('LEFTPADDING',(0,0),(-1,-1),0),
+#             ('RIGHTPADDING',(0,0),(-1,-1),0),
+#         ]))
+#         story.append(tbl)
+#         story.append(Spacer(1, 5))
+#     story.append(Spacer(1, 5, ))
+
+
+def render_experiences_details(exps, story, styles, doc):
+    """
+    Renders each experience entry if it has:
+      designation, companyName, location, start_date
+    Optional: end_date, caption, points
+    """
+    if not exps:
+        return
+
+    story.append(Paragraph('Experience', styles['SectionHeading']))
+    story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
+    left_col, right_col = calculateTableColumnSplit(doc)
+
+    for e in exps:
+        desig = e.get('designation','').strip()
+        comp  = e.get('companyName','').strip()
+        loc   = e.get('location','').strip()
+        start = e.get('start_date','').strip()
+        if not (desig and comp and loc and start):
+            continue
+
+        # Optional fields
+        end     = e.get('end_date','').strip()
+        caption = e.get('caption','').strip()
+        points  = e.get('points', [])
+
+        span = f"{start} – {end}" if end else start
+
+        # Header: designation & date, company & location
+        tbl = Table([
+            [Paragraph(desig, styles['ExpTitle']), Paragraph(span, styles['ExpDate'])],
+            [Paragraph(comp if not caption else caption, styles['ExpRole']),
+             Paragraph(loc, styles['ExpLoc'])]
+        ], colWidths=[left_col, right_col])
+        tbl.setStyle(TableStyle([
+            ('VALIGN',(0,0),(-1,-1),'TOP'),
+            ('LEFTPADDING',(0,0),(-1,-1),0), ('RIGHTPADDING',(0,0),(-1,-1),0),
         ]))
         story.append(tbl)
 
-
-        # — bullet list with custom indent & tighter bullet‐text gap —
-        items = []
-        for b in e['bullets']:
-            items.append(
-                ListItem(
-                    Paragraph(b, styles['BodyText'],),
-                    leftIndent=20,  # indent bullet+text from the page margin
-                    bulletIndent=0,  # bullet sits exactly at leftIndent
+        # Bullet points if present
+        if points:
+            items = [
+                ListItem(Paragraph(pt, styles['BodyText']), leftIndent=18, bulletIndent=0)
+                for pt in points
+            ]
+            story.append(
+                ListFlowable(items,
+                    bulletType='bullet', bulletFontName='CMR10',
+                    bulletFontSize=8, bulletOffsetY=-1, leftIndent=10
                 )
-
             )
+        story.append(Spacer(1, 5))
 
+    story.append(Spacer(1, 5))
+
+# def render_experiences_details(exps,story,styles,doc):
+#     story.append(Paragraph('Experience', styles['SectionHeading']))
+#     story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
+#     left_col, right_col = calculateTableColumnSplit(doc)
+#     for e in exps:
+#         span = f"{e['start_date']} – {e['end_date']}"
+#         tbl = Table([
+#             [Paragraph(e['companyName'], styles['ExpTitle']),
+#              Paragraph(span, styles['ExpDate'])],
+#             [Paragraph(e['designation'], styles['ExpRole']),
+#              Paragraph(e['location'], styles['ExpLoc'])],
+#
+#         ], colWidths=[left_col, right_col])
+#         tbl.setStyle(TableStyle([
+#             ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+#             ('LEFTPADDING', (0, 0), (-1, -1), 0),
+#             ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+#         ]))
+#         story.append(tbl)
+#
+#         items = [
+#             ListItem(Paragraph(pt, styles['BodyText']), leftIndent=20, bulletIndent=0)
+#             for pt in e['points']
+#         ]
+#         story.append(
+#             ListFlowable(items,
+#                          bulletType='bullet',
+#                          bulletFontName='CMR10',
+#                          bulletFontSize=8,
+#                          bulletOffsetY=-1,
+#                          leftIndent=10,
+#                          )
+#         )
+#         story.append(Spacer(1, 5))
+#     story.append(Spacer(1, 5, ))
+
+
+def render_skills_details(data, story, styles):
+    """
+    Renders each skill category if it has:
+      name, data (non-empty list)
+    """
+    if not data:
+        return
+
+    story.append(Paragraph('Technical Skills', styles['SectionHeading']))
+    story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
+
+    for sk in data:
+        name = sk.get('name','').strip()
+        items = sk.get('data', [])
+        if not (name and items):
+            continue
+
+        skills_text = ', '.join(items)
         story.append(
-            ListFlowable(
-                items,
-                bulletType='bullet',
-                bulletFontName='CMR10',
-                bulletFontSize=8,
-                bulletOffsetY=-1,
-                leftIndent=10,  # extra indent from the page margin
-
-            )
+            Paragraph(f'<font name="CMB10">{name}:</font> {skills_text}', styles['BodyText'])
         )
-        # original spacer
-        story.append(Spacer(1, 5,))
-    story.append(Spacer(1, 5, ))
+        # story.append(Spacer(1, 2))
+
+    story.append(Spacer(1, 8))
+
+# def render_skills_details(data,story,styles):
+#     story.append(Paragraph('Technical Skills', styles['SectionHeading']))
+#     story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
+#     for sk in data:
+#         items = ', '.join(sk['data'])
+#         story.append(
+#             Paragraph(f'<font name="CMB10">{sk["name"]}:</font> {items}', styles['BodyText'])
+#         )
+#         story.append(Spacer(1, 2))
+#     story.append(Spacer(1, 5))
 
 def skills(story,styles):
     # —— Technical Skills ——
@@ -415,6 +510,83 @@ def skills(story,styles):
         )
         story.append(Spacer(1, 2))
     story.append(Spacer(1, 5))
+
+
+def render_extras_details(data, story, styles, doc):
+    """
+    Renders each extracurricular/achievement if it has:
+      name, type, location, date, description
+    """
+    if not data:
+        return
+
+    story.append(Paragraph('Extracurricular / Achievements', styles['SectionHeading']))
+    story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
+    left_col, right_col = calculateTableColumnSplit(doc)
+
+    for item in data:
+        name = item.get('name','').strip()
+        type_ = item.get('type','').strip()
+        loc = item.get('location','').strip()
+        date = item.get('date','').strip()
+        desc = item.get('description','').strip()
+        if not (name and type_ and loc and date and desc):
+            continue
+
+
+        tbl = Table([
+            [Paragraph(name, styles['ExtraTitle']), Paragraph(date, styles['ExtraDate'])],
+            [Paragraph(desc, styles['ExtraDesc']), Paragraph(loc, styles['ExtraLoc'])]
+        ], colWidths=[left_col, right_col])
+        tbl.setStyle(TableStyle([
+            ('VALIGN',(0,0),(-1,-1),'TOP'),
+            ('LEFTPADDING',(0,0),(-1,-1),0), ('RIGHTPADDING',(0,0),(-1,-1),0),
+        ]))
+        story.append(tbl)
+        story.append(Spacer(1, 2))
+
+    story.append(Spacer(1, 5))
+
+# def render_extras_details(data,story,styles,doc):
+#     # —— Extracurricular / Achievements section ——
+#     if not data:
+#         return
+#
+#     story.append(Paragraph('Extracurricular / Achievements', styles['SectionHeading']))
+#     story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
+#
+#     left_col, right_col = calculateTableColumnSplit(doc)
+#
+#     for item in data:
+#         # skip if no name/date
+#         name = item.get('name', '').strip()
+#         date = item.get('date', '').strip()
+#         if not name or not date:
+#             continue
+#
+#         desc = item.get('description', '').strip()
+#
+#         loc = item.get('location', '').strip()
+#         # combine institution + location
+#
+#
+#         tbl = Table([
+#             [Paragraph(name, styles['ExtraTitle']),
+#              Paragraph(date, styles['ExtraDate'])],
+#             [Paragraph(desc, styles['ExtraDesc']),
+#              Paragraph(loc, styles['ExtraLoc'])]
+#         ], colWidths=[left_col, right_col])
+#         tbl.setStyle(TableStyle([
+#             ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+#             ('LEFTPADDING', (0, 0), (-1, -1), 0),
+#             ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+#         ]))
+#
+#         story.append(tbl)
+#         story.append(Spacer(1, 2))
+#
+#     # a little extra space at the end
+#     story.append(Spacer(1, 5))
 
 def extras(story,styles,doc):
     # —— Extracurricular / Achievements section ——
@@ -464,153 +636,429 @@ def extras(story,styles,doc):
         story.append(tbl)
         story.append(Spacer(1, 2))
     story.append(Spacer(1, 5))
+def render_projects_details(data, story, styles, doc):
+    """
+    Renders each project if it has:
+      projectName, location, projectDetails (non-empty list)
+    Optional: caption, start_date, end_date, url, externalSources, technologiesUsed
+    """
+    if not data:
+        return
 
-def projects(story,styles,doc):
-    # —— Projects ——
     story.append(Paragraph('Projects', styles['SectionHeading']))
     story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
-
-    # your list of project dicts
-    projects = [
-        {
-            'projectName': 'Calculator',
-            'projectCaption': 'Personal Production Application',
-            'start': 'June 2020',
-            'end': 'August 2020',
-            'location': 'Hyderabad, India',
-            'projectDetails': [
-                'By using flutter and provider as state management, developed a three-themed neumorphic calculator. The application has garnered over 50,000+ downloads worldwide on Playstore.'
-            ],
-            'externalSources': [
-                {'name': 'PlayStore',
-                 'link': 'https://play.google.com/store/apps/details?id=com.aquelastudios.calculater'},
-                {'name': 'GitHub', 'link': 'https://github.com/vaishnavbusha/neucalc'},
-            ]
-        },
-        {
-            'projectName': 'GymTracker',
-            'projectCaption': 'Personal Production Application',
-            'start': 'September 2023',
-            'end': 'Present',
-            'location': 'Hyderabad, India',
-            'projectDetails': [
-                'Designed and developed a B2B gym-management app: RSA-encrypted QR check-ins, exercise stats; Spring Boot + Firebase + AWS backend.',
-                'Integrated admin companion app for Firestore & RTDB operations.'
-            ],
-            'externalSources': [
-                {'name': 'PlayStore',
-                 'link': 'https://play.google.com/store/apps/details?id=com.aquelastudios.gymtracker'},
-                {'name': 'GitHub', 'link': 'https://github.com/vaishnavbusha/gymtracker'},
-            ]
-        },
-        # …add more projects here…
-    ]
     left_col, right_col = calculateTableColumnSplit(doc)
-    for p in projects:
-        # two-column header: project name & dates / caption & location
+
+    for p in data:
+        name     = p.get('projectName','').strip()
+        loc      = p.get('location','').strip()
+        details  = p.get('projectDetails', [])
+        if not (name and loc and details):
+            continue
+
+        # Optional
+        caption = p.get('caption','').strip()
+        start   = p.get('start_date','').strip()
+        end     = p.get('end_date','').strip()
+        techs   = p.get('technologiesUsed', [])
+        ext     = p.get('externalSources', [])
+
+        span = f"{start} – {end}" if start and end else start or ''
+
+        # Header table
         tbl = Table([
-            [Paragraph(p['projectName'], styles['EduInst']),
-             Paragraph(f"{p['start']} – {p['end']}", styles['EduDate'])],
-            [Paragraph(p['projectCaption'], styles['EduDegree']),
-             Paragraph(p['location'], styles['EduLoc'])]
+            [Paragraph(name, styles['ExpTitle']), Paragraph(span, styles['ExpDate'])],
+            [Paragraph(caption, styles['ExpRole']), Paragraph(loc, styles['ExpLoc'])]
         ], colWidths=[left_col, right_col])
         tbl.setStyle(TableStyle([
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-            ('LEFTPADDING', (0, 0), (-1, -1), 0),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+            ('VALIGN',(0,0),(-1,-1),'TOP'),
+            ('LEFTPADDING',(0,0),(-1,-1),0), ('RIGHTPADDING',(0,0),(-1,-1),0),
         ]))
         story.append(tbl)
 
-        # bullets for project details
-        items = []
-        for detail in p['projectDetails']:
-            items.append(
-                ListItem(
-                    Paragraph(detail, styles['BodyText']),
-                    leftIndent=18,
-                    bulletIndent=0,
-                    bulletFontName='CMR10',
-                    bulletFontSize=8,
-                    bulletOffsetY=-1,
-                    rightIndent=0
-                )
-            )
-        story.append(
-            ListFlowable(
-                items,
-                bulletType='bullet',
-                leftIndent=10,
-                valueIndent=10,
-                spaceBefore=4,  # ← new
-                spaceAfter=0  # ← new
-
-            )
-        )
-
-        links = [
-            f'<a href="{src["link"]}"><font color="blue">{src["name"]}</font></a>'
-            for src in p['externalSources']
+        # Details bullets
+        items = [
+            ListItem(Paragraph(d, styles['BodyText']), leftIndent=18, bulletIndent=0,
+                     bulletFontName='CMR10', bulletFontSize=8, bulletOffsetY=-1)
+            for d in details
         ]
-        link_text = f'<font name="CMB10">Link(s):</font> ' + ', '.join(links)
-
-        # make it a ListItem…
-        link_item = ListItem(
-            Paragraph(link_text, styles['BodyText']),
-            leftIndent=18,  # indent bullet + text
-            bulletIndent=0  # bullet sits exactly at leftIndent
-        )
-
-        # …and put it in a ListFlowable
         story.append(
-            ListFlowable(
-                [link_item],
-                bulletType='bullet',
-                bulletFontName='CMR10',
-                bulletFontSize=8,
-                bulletOffsetY=-1,
-                leftIndent=10,  # extra margin from page edge
-                # spaceBefore=4,  # ← new
-                # spaceAfter=0
-            )
+            ListFlowable(items, bulletType='bullet', leftIndent=10, valueIndent=10,
+                         spaceBefore=4, spaceAfter=0)
         )
 
-        # then maybe a small Spacer before next section
+        # External links if present
+        if ext:
+            links = [
+                f'<a href="{src["link"]}"><font color="blue">{src["name"]}</font></a>'
+                for src in ext if src.get('name') and src.get('link')
+            ]
+            if links:
+                link_text = '<font name="CMB10">Link(s):</font> ' + ', '.join(links)
+                story.append(
+                    ListFlowable(
+                        [ListItem(Paragraph(link_text, styles['BodyText']),
+                                  leftIndent=18, bulletIndent=0,
+                                  bulletFontName='CMR10', bulletFontSize=8, bulletOffsetY=-1)],
+                        bulletType='bullet', leftIndent=10
+                    )
+                )
+
+        # Technologies used if present
+        if techs:
+            tech_text = ', '.join(techs)
+            story.append(Paragraph(f'<font name="CMB10">Technologies:</font> {tech_text}', styles['BodyText']))
+            story.append(Spacer(1,5))
+
         story.append(Spacer(1, 5))
+
+    story.append(Spacer(1, 5))
+
+# def render_projects_details(data, story, styles, doc):
+#     story.append(Paragraph('Projects', styles['SectionHeading']))
+#     story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
+#     left_col, right_col = calculateTableColumnSplit(doc)
+#
+#     for p in data:
+#         # Header 2×2
+#         span = f"{p['start_date']} – {p['end_date']}"
+#         tbl = Table([
+#             [Paragraph(p['projectName'], styles['EduInst']),
+#              Paragraph(span, styles['EduDate'])],
+#             [Paragraph(p.get('caption',''), styles['EduDegree']),
+#              Paragraph(p.get('location',''), styles['EduLoc'])]
+#         ], colWidths=[left_col, right_col])
+#         tbl.setStyle(TableStyle([
+#             ('VALIGN',      (0, 0), (-1, -1), 'TOP'),
+#             ('LEFTPADDING',  (0, 0), (-1, -1), 0),
+#             ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+#         ]))
+#         story.append(tbl)
+#
+#         # Project details bullets
+#         items = [
+#             ListItem(
+#                 Paragraph(detail, styles['BodyText']),
+#                 leftIndent=18, bulletIndent=0,
+#                 bulletFontName='CMR10', bulletFontSize=8, bulletOffsetY=-1
+#             )
+#             for detail in p.get('projectDetails', [])
+#         ]
+#         if items:
+#             story.append(
+#                 ListFlowable(
+#                     items,
+#                     bulletType='bullet',
+#                     leftIndent=10,
+#                     valueIndent=10,
+#                     spaceBefore=4,
+#                     spaceAfter=0
+#                 )
+#             )
+#
+#         # Optional externalResources
+#         ext = p.get('externalSources') or []
+#         if ext:
+#             links = [
+#                 f'<a href="{src["link"]}"><font color="blue">{src["name"]}</font></a>'
+#                 for src in ext
+#             ]
+#             link_text = f'<font name="CMB10">Link(s):</font> ' + ', '.join(links)
+#             link_item = ListItem(
+#                 Paragraph(link_text, styles['BodyText']),
+#                 leftIndent=18, bulletIndent=0,
+#                 bulletFontName='CMR10', bulletFontSize=8, bulletOffsetY=-1
+#             )
+#             story.append(
+#                 ListFlowable(
+#                     [link_item],
+#                     bulletType='bullet',
+#                     leftIndent=10,
+#                     bulletFontName='CMR10',
+#                     bulletFontSize=8,
+#                     bulletOffsetY=-1
+#                 )
+#             )
+#
+#         # Spacer before next project
+#         story.append(Spacer(1, 5))
+#
+#     # final bottom spacer
+#     story.append(Spacer(1, 5))
+def render_awards_details(data, story, styles, doc):
+    """
+    Renders each award if it has:
+      name, type, location, date, description
+    """
+    if not data:
+        return
+
+    story.append(Paragraph('Awards', styles['SectionHeading']))
+    story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
+    left_col, right_col = calculateTableColumnSplit(doc)
+
+    for item in data:
+        name = item.get('name','').strip()
+        type_ = item.get('type','').strip()
+        loc = item.get('location','').strip()
+        date = item.get('date','').strip()
+        desc = item.get('description','').strip()
+        if not (name and type_ and loc and date and desc):
+            continue
+
+        location_text = f"{type_}, {loc}"
+        tbl = Table([
+            [Paragraph(name, styles['ExtraTitle']), Paragraph(date, styles['ExtraDate'])],
+            [Paragraph(desc, styles['ExtraDesc']), Paragraph(location_text, styles['ExtraLoc'])]
+        ], colWidths=[left_col, right_col])
+        tbl.setStyle(TableStyle([
+            ('VALIGN',(0,0),(-1,-1),'TOP'),
+            ('LEFTPADDING',(0,0),(-1,-1),0), ('RIGHTPADDING',(0,0),(-1,-1),0),
+        ]))
+        story.append(tbl)
+        story.append(Spacer(1, 2))
+
+    story.append(Spacer(1, 5))
+
+# def render_awards_details(data,story,styles,doc):
+#     # —— Extracurricular / Achievements section ——
+#     if not data:
+#         return
+#
+#     story.append(Paragraph('Awards', styles['SectionHeading']))
+#     story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
+#
+#     left_col, right_col = calculateTableColumnSplit(doc)
+#
+#     for item in data:
+#         # skip if no name/date
+#         name = item.get('name', '').strip()
+#         date = item.get('date', '').strip()
+#         if not name or not date:
+#             continue
+#
+#         desc = item.get('description', '').strip()
+#
+#         loc = item.get('location', '').strip()
+#         # combine institution + location
+#
+#
+#         tbl = Table([
+#             [Paragraph(name, styles['ExtraTitle']),
+#              Paragraph(date, styles['ExtraDate'])],
+#             [Paragraph(desc, styles['ExtraDesc']),
+#              Paragraph(loc, styles['ExtraLoc'])]
+#         ], colWidths=[left_col, right_col])
+#         tbl.setStyle(TableStyle([
+#             ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+#             ('LEFTPADDING', (0, 0), (-1, -1), 0),
+#             ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+#         ]))
+#
+#         story.append(tbl)
+#         story.append(Spacer(1, 2))
+#
+#     # a little extra space at the end
+#     story.append(Spacer(1, 5))
+def render_languages(data, story, styles):
+    """
+    Renders each language if it has:
+      language, proficiency
+    """
+    if not data:
+        return
+
+    story.append(Paragraph('Languages', styles['SectionHeading']))
+    story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
+
+    for l in data:
+        lang = l.get('language','').strip()
+        prof = l.get('proficiency','').strip()
+        if not (lang and prof):
+            continue
+        story.append(Paragraph(f'<font name="CMB10">{lang}:</font> {prof}', styles['BodyText']))
 
 
     story.append(Spacer(1, 5))
 
-def build_pdf(buffer):
+# def render_languages(data, story, styles):
+#     story.append(Paragraph('Languages', styles['SectionHeading']))
+#     story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
+#     for l in data:
+#
+#         story.append(
+#             Paragraph(f'<font name="CMB10">{l["language"]}: </font>{l['proficiency']}', styles['BodyText'])
+#         )
+#
+#     story.append(Spacer(1, 5))
+
+def render_summary_details(data, story, styles):
+    """
+    Renders summary only if non-empty (optional).
+    """
+    text = (data or '').strip()
+    if not text:
+        return
+
+    story.append(Paragraph('Summary', styles['SectionHeading']))
+    story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
+    story.append(Paragraph(text, styles['BodyText']))
+    story.append(Spacer(1, 10))
+
+# def render_summary_details(data, story, styles):
+#     story.append(Paragraph('Summary', styles['SectionHeading']))
+#     story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
+#     story.append(Paragraph(data, styles['BodyText']))
+#     story.append(Spacer(1, 12))
+
+
+def render_certifications(data, story, styles, doc):
+    """
+    Renders each certification if it has:
+      name, issuing_organization, issue_date, expiration_date, credential_id, url
+    """
+    if not data:
+        return
+
+    story.append(Paragraph('Certifications', styles['SectionHeading']))
+    story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
+    left_col, right_col = calculateTableColumnSplit(doc)
+
+    for item in data:
+        name  = item.get('name','').strip()
+        org   = item.get('issuing_organization','').strip()
+        issue = item.get('issue_date','').strip()
+        exp   = item.get('expiration_date','').strip()
+        cred  = item.get('credential_id','').strip()
+        url   = item.get('url','').strip()
+        if not (name and org and issue and exp and cred and url):
+            continue
+
+        date_span = f"{issue} – {exp}"
+        cred_cell = Paragraph(f'<a href="{url}"><u>{cred}</u></a>', styles['ExtraDesc'])
+
+        tbl = Table([
+            [Paragraph(name, styles['ExtraTitle']), Paragraph(date_span, styles['ExtraDate'])],
+            [cred_cell, Paragraph(org, styles['ExtraLoc'])]
+        ], colWidths=[left_col, right_col])
+        tbl.setStyle(TableStyle([
+            ('VALIGN',(0,0),(-1,-1),'TOP'),
+            ('LEFTPADDING',(0,0),(-1,-1),0), ('RIGHTPADDING',(0,0),(-1,-1),0),
+        ]))
+        story.append(tbl)
+        story.append(Spacer(1, 2))
+
+    story.append(Spacer(1, 5))
+#
+# def render_certifications(data, story, styles, doc):
+#     if not data:
+#         return
+#
+#     story.append(Paragraph('Certifications', styles['SectionHeading']))
+#     story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
+#
+#     left_col, right_col = calculateTableColumnSplit(doc)
+#
+#     for item in data:
+#         name        = item.get('name', '').strip()
+#         issued_org  = item.get('issuing_organization', '').strip()
+#         cred_id     = item.get('credential_id', '').strip()
+#         url         = item.get('url', '').strip()
+#         date_span   = f"{item.get('issue_date','')} – {item.get('expiration_date','')}"
+#
+#         if not name or not date_span:
+#             continue
+#
+#         # build credential ID cell: link+underline if URL present, else plain text
+#         if cred_id and url:
+#             cred_cell = Paragraph(f'<a href="{url}"><u>{cred_id}</u></a>', styles['ExtraDesc'])
+#         else:
+#             cred_cell = Paragraph(cred_id, styles['ExtraDesc'])
+#
+#         tbl = Table([
+#             [Paragraph(name,       styles['ExtraTitle']),
+#              Paragraph(date_span,  styles['ExtraDate'])],
+#             [cred_cell,
+#              Paragraph(issued_org, styles['ExtraLoc'])]
+#         ], colWidths=[left_col, right_col])
+#         tbl.setStyle(TableStyle([
+#             ('VALIGN',      (0, 0), (-1, -1), 'TOP'),
+#             ('LEFTPADDING',  (0, 0), (-1, -1), 0),
+#             ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+#         ]))
+#
+#         story.append(tbl)
+#         story.append(Spacer(1, 2))
+#
+#     story.append(Spacer(1, 5))
+
+def _set_metadata(canvas, document):
+    canvas.setAuthor('vaishnav')
+    canvas.setTitle('vaishnav')
+    # if you want you can also set subject/keywords:
+    # canvas.setSubject('Resume of Vaishnav')
+    # canvas.setKeywords('resume, vaishnav, pdf')
+
+def build_pdf(buffer,data):
+    author_name = data['personal_information']['name']
     doc = SimpleDocTemplate(
         buffer,
         pagesize=letter,
-        leftMargin=0.5*inch, rightMargin=0.5*inch,
-        topMargin=0.5*inch, bottomMargin=0.5*inch
+        leftMargin=0.3*inch, rightMargin=0.3*inch,
+        topMargin=0.3*inch, bottomMargin=0.3*inch
     )
 
 
     styles = resumeStyling()
     story = []
-    personalInformationBlock(story,styles)
-    education(story,styles,doc)
-    experiences(story,styles,doc)
-    skills(story,styles)
-    projects(story,styles,doc)
-    extras(story,styles,doc)
+    render_personal_info(data['personal_information'],story,styles)
 
-    doc.build(story)
+    render_education_details(data['education'],story,styles,doc)
+
+    render_experiences_details(data['experiences'],story,styles,doc)
+
+    render_skills_details(data['skills'],story,styles)
+
+    render_projects_details(data['projects'],story,styles,doc)
+
+    render_extras_details(data['extracurricular/achievements'],story,styles,doc)
+
+    render_languages(data['languages'],story,styles)
+
+    render_summary_details(data['summary'], story, styles)
+
+    render_awards_details(data['awards'],story,styles,doc)
+
+    render_certifications(data['certifications'],story,styles,doc)
+
+
+    def _set_metadata(canvas, document):
+        canvas.setAuthor(author_name)
+        canvas.setTitle(f"{author_name} Resume")
+
+    doc.build(
+        story,
+        onFirstPage=_set_metadata,
+        onLaterPages=_set_metadata
+    )
 
 @app.route('/resume')
 def resume():
+    # load your JSON from file or other source
+    with open('schema.json') as f:
+        resume_data = json.load(f)
+
     buf = io.BytesIO()
-    build_pdf(buf)
+    build_pdf(buf, resume_data)
     buf.seek(0)
     return send_file(
         buf,
         mimetype='application/pdf',
         as_attachment=False,
-        download_name='Vaishnav_Busha_Resume.pdf'
+        download_name='Resume.pdf'
     )
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
