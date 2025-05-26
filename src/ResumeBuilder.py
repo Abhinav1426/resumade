@@ -1,9 +1,9 @@
 import json
 import os
 from openai import OpenAI
-from dotenv import load_dotenv, dotenv_values
+from dotenv import load_dotenv
 
-from src.FileOperations import load_schema_file
+from src.FileOperations import FileOperations
 from src.Prompts import Prompts
 
 load_dotenv()
@@ -14,7 +14,7 @@ class ResumeBuilder:
         self.llm_provider = llm_provider
         self.client, self.model = self.create_client(llm_provider)
         self.prompts = Prompts()
-        self.schema_file_contents = load_schema_file("data/schema.json")
+        self.schema_file_contents = FileOperations().load_schema_file("data/schema.json")
 
     @staticmethod
     def openAi_llm_caller(client,model,message):
