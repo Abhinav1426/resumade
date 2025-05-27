@@ -39,6 +39,7 @@
                 "Worked session management for Smart Compliance Canada application"
             ]
         }
+
     ],
     "education": [
         {
@@ -103,6 +104,34 @@
     ],
     "projects": [
         {
+            "projectName": "Smart Home Automation",
+            "caption": "Geethanjali College of Engineering",
+            "location": "Hyderabad, India",
+            "start_date": "November 20212",
+            "end_date": "April 2022",
+            "url": "",
+            "projectDetails": [
+                "Developed and designed Smart Home Automation where we take existing appliances to online. It specifically focuses on the development of a user friendly IOT based home automation system that is able to control various components inside home via internet",
+                "System consists of mobile app which was developed in flutter where u can control the home applications through the app",
+                "Integration with Voice Assistants like Google Assistant, Alexa. Where u can control the home applications using the devices which support these voice assistants"
+            ],
+            "externalSources": [
+                {
+                    "name": "PlayStore",
+                    "link": "https://play.google.com/store/apps/details?id=com.aquelastudios.gymtracker"
+                },
+                {
+                    "name": "GitHub",
+                    "link": "https://github.com/vaishnavbusha/gymtracker"
+                }
+            ],
+            "technologiesUsed": [
+                "Flutter",
+                "IOT",
+                "Assembly Language"
+            ]
+        },
+          {
             "projectName": "Smart Home Automation",
             "caption": "Geethanjali College of Engineering",
             "location": "Hyderabad, India",

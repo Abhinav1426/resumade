@@ -36,7 +36,21 @@ if __name__ == '__main__':
     file_ops.save_json_to_file(resume_json_with_job, file_name='gen_ai_resume')
 
     # Convert the JSON to PDF
-    bytes = json_to_pdf_builder.build(resume_json_with_job)
+    custom_order = [
+        'personal_info',
+        'summary',
+        'education',
+        'experiences',
+        'skills',
+        'projects',
+        'languages',
+        'extras',
+        'awards',
+        'certifications',
+    ]
+    resume_json_with_job = file_ops.load_schema_file(file_path='data/sample.json')
+    # bytes = json_to_pdf_builder.build(resume_json_with_job)
+    bytes = json_to_pdf_builder.build(resume_json_with_job, order=custom_order)
     file_ops.save_pdf_to_file(bytes, file_name='gen_ai_resume')
     print(f"PDF generated")
 
