@@ -14,10 +14,10 @@ from typing import Optional, List
 class JsonToPDFBuilder:
     def __init__(self):
         # Register fonts
-        pdfmetrics.registerFont(TTFont('CMR10', './fonts/cmunrm.ttf'))  # Roman
-        pdfmetrics.registerFont(TTFont('CMB10', './fonts/cmunbx.ttf'))  # Bold
-        pdfmetrics.registerFont(TTFont('CMIT10', './fonts/cmunti.ttf'))  # Italic
-        pdfmetrics.registerFont(TTFont('BodoniMT', './fonts/bodoni-mt-regular.ttf'))
+        pdfmetrics.registerFont(TTFont('CMR10', 'data/fonts/cmunrm.ttf'))  # Roman
+        pdfmetrics.registerFont(TTFont('CMB10', 'data/fonts/cmunbx.ttf'))  # Bold
+        pdfmetrics.registerFont(TTFont('CMIT10', 'data/fonts/cmunti.ttf'))  # Italic
+        pdfmetrics.registerFont(TTFont('BodoniMT', 'data/fonts/bodoni-mt-regular.ttf'))
         self.story = []
         self.styles = self.resumeStyling()
         # Default rendering order
@@ -227,11 +227,11 @@ class JsonToPDFBuilder:
         parts = []
 
         # Phone
-        parts.append(f'<img src="./images/phone.png" width="10" height="10"/>&nbsp;{phone}')
+        parts.append(f'<img src="data/images/phone.png" width="10" height="10"/>&nbsp;{phone}')
 
         # Email
         parts.append(
-            f'<img src="./images/mail.png" width="10" height="10"/>&nbsp;'
+            f'<img src="data/images/mail.png" width="10" height="10"/>&nbsp;'
             f'<a href="mailto:{email}"><u>{email}</u></a>'
         )
 
@@ -241,7 +241,7 @@ class JsonToPDFBuilder:
             link = self.safe_strip(soc.get('link', ''))
             if not (name and link):
                 continue
-            icon = f'./images/{name.lower()}.png'
+            icon = f'data/images/{name.lower()}.png'
             parts.append(
                 f'<img src="{icon}" width="10" height="10"/>&nbsp;'
                 f'<a href="{link}"><u>{name}</u></a>'
@@ -796,16 +796,16 @@ class JsonToPDFBuilder:
 
         # map keys to the actual render calls
         section_map = {
-            'personal_info': lambda: self.render_personal_info(data['personal_information']),
-            'education': lambda: self.render_education_details(data['education'], doc),
-            'experiences': lambda: self.render_experiences_details(data['experiences'], doc),
-            'skills': lambda: self.render_skills_details(data['skills']),
-            'projects': lambda: self.render_projects_details(data['projects'], doc),
-            'extras': lambda: self.render_extras_details(data['extracurricular/achievements'], doc),
-            'languages': lambda: self.render_languages(data['languages']),
-            'summary': lambda: self.render_summary_details(data['summary']),
-            'awards': lambda: self.render_awards_details(data['awards'], doc),
-            'certifications': lambda: self.render_certifications(data['certifications'], doc),
+            'personal_info': lambda: self.render_personal_info(data.get('personal_information', {})),
+            'education': lambda: self.render_education_details(data.get('education', []), doc),
+            'experiences': lambda: self.render_experiences_details(data.get('experiences', []), doc),
+            'skills': lambda: self.render_skills_details(data.get('skills', [])),
+            'projects': lambda: self.render_projects_details(data.get('projects', []), doc),
+            'extras': lambda: self.render_extras_details(data.get('extracurricular/achievements', []), doc),
+            'languages': lambda: self.render_languages(data.get('languages', [])),
+            'summary': lambda: self.render_summary_details(data.get('summary', '')),
+            'awards': lambda: self.render_awards_details(data.get('awards', []), doc),
+            'certifications': lambda: self.render_certifications(data.get('certifications', []), doc),
         }
 
         # execute in order
