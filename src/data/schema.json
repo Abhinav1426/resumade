@@ -69,9 +69,6 @@
             "end_date": {
               "type": "string"
             },
-            "caption": {
-              "type": "string"
-            },
             "points": {
               "type": "array",
               "items": [
@@ -160,10 +157,10 @@
         {
           "type": "object",
           "properties": {
-            "projectName": {
+            "title": {
               "type": "string"
             },
-            "caption": {
+            "subtitle": {
               "type": "string"
             },
             "location": {

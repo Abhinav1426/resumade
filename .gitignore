@@ -4,3 +4,4 @@ src/__pycache__/
 files/Extracted_schema*.json
 files/gen_ai*
 files/resume*
+/jsonTopdf_tester/

@@ -370,61 +370,6 @@ class JsonToPDFBuilder:
         # final bottom spacer
         self.story.append(Spacer(1, 5))
 
-    # def render_experiences_details(self,exps,doc):
-    #     """
-    #     Renders each experience entry if it has:
-    #       designation, companyName, location, start_date
-    #     Optional: end_date, caption, points
-    #     """
-    #     if not exps:
-    #         return
-    #
-    #     self.story.append(Paragraph('Experience', self.styles['SectionHeading']))
-    #     self.story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
-    #     left_col, right_col = self.calculateTableColumnSplit(doc)
-    #
-    #     for e in exps:
-    #         desig = self.safe_strip(e.get('designation',''))
-    #         comp  = self.safe_strip(e.get('companyName',''))
-    #         loc   = self.safe_strip(e.get('location',''))
-    #         start = self.safe_strip(e.get('start_date',''))
-    #         if not (desig and comp and loc and start):
-    #             continue
-    #
-    #         # Optional fields
-    #         end     = self.safe_strip(e.get('end_date',''))
-    #         caption = self.safe_strip(e.get('caption',''))
-    #         points  = e.get('points', [])
-    #
-    #         span = f"{start} – {end}" if end else start
-    #
-    #         # Header: designation & date, company & location
-    #         tbl = Table([
-    #             [Paragraph(desig, self.styles['ExpTitle']), Paragraph(span, self.styles['ExpDate'])],
-    #             [Paragraph(comp if not caption else caption, self.styles['ExpRole']),
-    #              Paragraph(loc, self.styles['ExpLoc'])]
-    #         ], colWidths=[left_col, right_col])
-    #         tbl.setStyle(TableStyle([
-    #             ('VALIGN',(0,0),(-1,-1),'TOP'),
-    #             ('LEFTPADDING',(0,0),(-1,-1),0), ('RIGHTPADDING',(0,0),(-1,-1),0),
-    #         ]))
-    #         self.story.append(tbl)
-    #
-    #         # Bullet points if present
-    #         if points:
-    #             items = [
-    #                 ListItem(Paragraph(pt, self.styles['BodyText']), leftIndent=18, bulletIndent=0)
-    #                 for pt in points
-    #             ]
-    #             self.story.append(
-    #                 ListFlowable(items,
-    #                     bulletType='bullet', bulletFontName='CMR10',
-    #                     bulletFontSize=8, bulletOffsetY=-1, leftIndent=10
-    #                 )
-    #             )
-    #         self.story.append(Spacer(1, 5))
-    #
-    #     self.story.append(Spacer(1, 5))
 
     def render_skills_details(self, data):
         """
@@ -509,13 +454,13 @@ class JsonToPDFBuilder:
         )
 
         for p in data:
-            name = self.safe_strip(p.get('projectName', ''))
+            name = self.safe_strip(p.get('title', ''))
             loc = self.safe_strip(p.get('location', ''))
             details = p.get('projectDetails', [])
             if not (name and loc and details):
                 continue
 
-            caption = self.safe_strip(p.get('caption', ''))
+            caption = self.safe_strip(p.get('subtitle', ''))
             start = self.safe_strip(p.get('start_date', ''))
             end = self.safe_strip(p.get('end_date', ''))
             techs = p.get('technologiesUsed', [])
@@ -597,83 +542,7 @@ class JsonToPDFBuilder:
         # final bottom spacer
         self.story.append(Spacer(1, 5))
 
-    # def render_projects_details(self,data, doc):
-    #     """
-    #     Renders each project if it has:
-    #       projectName, location, projectDetails (non-empty list)
-    #     Optional: caption, start_date, end_date, url, externalSources, technologiesUsed
-    #     """
-    #     if not data:
-    #         return
-    #
-    #     self.story.append(Paragraph('Projects', self.styles['SectionHeading']))
-    #     self.story.append(HRFlowable(width="100%", thickness=0.5, color=colors.black))
-    #     left_col, right_col = self.calculateTableColumnSplit(doc)
-    #
-    #     for p in data:
-    #         name     = self.safe_strip(p.get('projectName',''))
-    #         loc      = self.safe_strip(p.get('location',''))
-    #         details  = p.get('projectDetails', [])
-    #         if not (name and loc and details):
-    #             continue
-    #
-    #         # Optional
-    #         caption = self.safe_strip(p.get('caption',''))
-    #         start   = self.safe_strip(p.get('start_date',''))
-    #         end     = self.safe_strip(p.get('end_date',''))
-    #         techs   = p.get('technologiesUsed', [])
-    #         ext     = p.get('externalSources', [])
-    #
-    #         span = f"{start} – {end}" if start and end else start or ''
-    #
-    #         # Header table
-    #         tbl = Table([
-    #             [Paragraph(name, self.styles['ExpTitle']), Paragraph(span, self.styles['ExpDate'])],
-    #             [Paragraph(caption, self.styles['ExpRole']), Paragraph(loc, self.styles['ExpLoc'])]
-    #         ], colWidths=[left_col, right_col])
-    #         tbl.setStyle(TableStyle([
-    #             ('VALIGN',(0,0),(-1,-1),'TOP'),
-    #             ('LEFTPADDING',(0,0),(-1,-1),0), ('RIGHTPADDING',(0,0),(-1,-1),0),
-    #         ]))
-    #         self.story.append(tbl)
-    #
-    #         # Details bullets
-    #         items = [
-    #             ListItem(Paragraph(d, self.styles['BodyText']), leftIndent=18, bulletIndent=0,
-    #                      bulletFontName='CMR10', bulletFontSize=8, bulletOffsetY=-1)
-    #             for d in details
-    #         ]
-    #         self.story.append(
-    #             ListFlowable(items, bulletType='bullet', leftIndent=10, valueIndent=10,
-    #                          spaceBefore=4, spaceAfter=0)
-    #         )
-    #
-    #         # External links if present
-    #         if ext:
-    #             links = [
-    #                 f'<a href="{src["link"]}"><font color="blue">{src["name"]}</font></a>'
-    #                 for src in ext if src.get('name') and src.get('link')
-    #             ]
-    #             if links:
-    #                 link_text = '<font name="CMB10">Link(s):</font> ' + ', '.join(links)
-    #                 self.story.append(
-    #                     ListFlowable(
-    #                         [ListItem(Paragraph(link_text, self.styles['BodyText']),
-    #                                   leftIndent=18, bulletIndent=0,
-    #                                   bulletFontName='CMR10', bulletFontSize=8, bulletOffsetY=-1)],
-    #                         bulletType='bullet', leftIndent=10
-    #                     )
-    #                 )
-    #
-    #         # Technologies used if present
-    #         if techs:
-    #             tech_text = ', '.join(techs)
-    #             self.story.append(Paragraph(f'<font name="CMB10">Technologies:</font> {tech_text}', self.styles['BodyText']))
-    #             self.story.append(Spacer(1,5))
-    #
-    #         self.story.append(Spacer(1, 5))
-    #
-    #     self.story.append(Spacer(1, 5))
+
 
     def render_awards_details(self, data, doc):
         """
