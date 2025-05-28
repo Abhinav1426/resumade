@@ -1,3 +1,5 @@
+fastapi[standard]
+pydantic
 pymupdf
 python-docx
 python-dotenv
@@ -5,3 +7,4 @@ openai
 requests
 beautifulsoup4
 lxml
+pydantic_settings

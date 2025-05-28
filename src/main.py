@@ -1,10 +1,7 @@
-import os
-from pprint import pprint
-
-from FileOperations import FileOperations
-from ResumeBuilder import ResumeBuilder
-from JsonToPDFBuilder import JsonToPDFBuilder
-from WebScraper import WebScraper
+from src.utils.FileOperations import FileOperations
+from src.services.ResumeBuilder import ResumeBuilder
+from src.services.JsonToPDFBuilder import JsonToPDFBuilder
+from src.utils.WebScraper import WebScraper
 
 if __name__ == '__main__':
     pdfPath="C:\\Users\\Abhinav\\Downloads\\resume (4).docx"
