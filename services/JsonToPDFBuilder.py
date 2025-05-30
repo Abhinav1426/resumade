@@ -14,10 +14,10 @@ from typing import Optional, List
 class JsonToPDFBuilder:
     def __init__(self):
         # Register fonts
-        pdfmetrics.registerFont(TTFont('CMR10', 'data/fonts/cmunrm.ttf'))  # Roman
-        pdfmetrics.registerFont(TTFont('CMB10', 'data/fonts/cmunbx.ttf'))  # Bold
-        pdfmetrics.registerFont(TTFont('CMIT10', 'data/fonts/cmunti.ttf'))  # Italic
-        pdfmetrics.registerFont(TTFont('BodoniMT', 'data/fonts/bodoni-mt-regular.ttf'))
+        pdfmetrics.registerFont(TTFont('CMR10', '../data/fonts/cmunrm.ttf'))  # Roman
+        pdfmetrics.registerFont(TTFont('CMB10', '../data/fonts/cmunbx.ttf'))  # Bold
+        pdfmetrics.registerFont(TTFont('CMIT10', '../data/fonts/cmunti.ttf'))  # Italic
+        pdfmetrics.registerFont(TTFont('BodoniMT', '../data/fonts/bodoni-mt-regular.ttf'))
         self.story = []
         self.styles = self.resumeStyling()
         # Default rendering order

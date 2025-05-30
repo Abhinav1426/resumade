@@ -1,7 +1,7 @@
-from src.utils.FileOperations import FileOperations
-from src.services.ResumeBuilder import ResumeBuilder
-from src.services.JsonToPDFBuilder import JsonToPDFBuilder
-from src.utils.WebScraper import WebScraper
+from utils.FileOperations import FileOperations
+from services.ResumeBuilder import ResumeBuilder
+from services.JsonToPDFBuilder import JsonToPDFBuilder
+from utils.WebScraper import WebScraper
 
 if __name__ == '__main__':
     pdfPath="C:\\Users\\Abhinav\\Downloads\\resume (4).docx"
