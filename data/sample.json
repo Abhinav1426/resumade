@@ -1,0 +1,209 @@
+{
+  "personal_information": {
+    "name": "Naga Shivani Pinnamaraju",
+    "email": "shivanipinnamaraju@gmail.com",
+    "phone": "940-344-4002",
+    "location": "Argyle, TX 76226",
+    "socials": [
+      {
+        "name": "linkedin",
+        "link": "https://www.linkedin.com/in/shivani-pinnamaraju"
+      }
+    ]
+  },
+  "summary": "Detail-oriented and solution-driven Software Engineer with 2+ years of experience in full-stack development, cloud-native systems, and DevOps. Adept in Python, Java/Spring Boot, JavaScript, and AWS, with a strong foundation in designing and deploying scalable software solutions. Proven ability to work independently on end-to-end feature development, from definition to deployment. Experience includes maintaining healthcare systems with high uptime and implementing automation to streamline operations. Committed to writing clean, well-documented code while collaborating with cross-functional teams in Agile environments.",
+  "experiences": [
+    {
+      "designation": "Associate Engineer",
+      "companyName": "Virtusa Consulting Services Pvt. Ltd.",
+      "location": "Hyderabad, India",
+      "start_date": "Jun 2022",
+      "end_date": "Jul 2023",
+      "points": [
+        "Supported mission-critical healthcare applications (TruCare, QlikView) achieving ”98%” system uptime by proactively monitoring more than 100 scheduled Control-M jobs daily.",
+        "Diagnosed and resolved application incidents, cutting average response time by 15% through root-cause analysis and SQL data fixes.",
+        "Collaborated with cross-functional teams to tune Informatica Cloud pipelines, improving data load performance by 20%.",
+        "Documented standard operating procedures for L2 support, enabling faster onboarding of new team members."
+      ]
+    },
+    {
+      "designation": "Intern",
+      "companyName": "Virtusa Consulting Services Pvt. Ltd.",
+      "location": "Hyderabad, India",
+      "start_date": "Jan 2022",
+      "end_date": "May 2022",
+      "points": [
+        "Closed 120+ ServiceNow tickets within SLA, improving average resolution time by 20%.",
+        "Automated recurring health checks and job monitoring scripts in Python, reducing manual effort 10%."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "University of North Texas",
+      "degree": "Master of Science in Computer Science",
+      "location": "Denton, TX",
+      "start_date": "August 2023",
+      "end_date": "May 2025",
+      "gpa": "3.8",
+      "gpa_out_off": "4.0"
+    },
+    {
+      "institution": "Geetanjali College of Engineering and Technology",
+      "degree": "B.tech in Computer Science Engineering",
+      "location": "Hyderabad, Telangana",
+      "start_date": "June 2018",
+      "end_date": "June 2022",
+      "gpa": "8",
+      "gpa_out_off": "10"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Languages",
+      "data": [
+        "Python",
+        "Java",
+        "JavaScript",
+        "TypeScript",
+        "SQL",
+        "NoSQL",
+        "C++",
+        "Bash"
+      ]
+    },
+    {
+      "name": "Frameworks & Technologies",
+      "data": [
+        "Spring Boot",
+        "React",
+        "Redux",
+        "Next.js",
+        "Django",
+        "MDF",
+        "AWS CDK",
+        "Lambda",
+        "Step Functions",
+        "Docker",
+        "Kubernetes"
+      ]
+    },
+    {
+      "name": "DevOps & Cloud",
+      "data": [
+        "AWS (EC2, S3, SNS, SQS, CloudWatch)",
+        "Jenkins",
+        "GCP",
+        "Control-M",
+        "Git",
+        "Bitbucket"
+      ]
+    },
+    {
+      "name": "Database",
+      "data": [
+        "PostgreSQL",
+        "MongoDB",
+        "Redis"
+      ]
+    },
+    {
+      "name": "Tools & Practices",
+      "data": [
+        "Agile",
+        "Jira",
+        "Confluence",
+        "CI/CD",
+        "REST API design",
+        "HL7/patient data (healthcare exposure)"
+      ]
+    },
+    {
+      "name": "CRM/Other",
+      "data": [
+        "Salesforce Admin Certified",
+        "ITIL Foundation",
+        "ServiceNow",
+        "Informatica Cloud"
+      ]
+    },
+    {
+      "name": "Project methodology",
+      "data": [
+        "Agile",
+        "Waterfall"
+      ]
+    },
+    {
+      "name": "Management tools",
+      "data": [
+        "Jira",
+        "Bitbucket",
+        "Git",
+        "Notion",
+        "Confluence"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "projectName": "Smart Home Automation",
+      "location": "Geethanjali College of Engineering, Hyderabad, India",
+      "start_date": "November 2021",
+      "end_date": "April 2022",
+      "projectDetails": [
+        "Developed and designed Smart Home Automation where we take existing appliances to online. It specifically focuses on the development of a user friendly IOT based home automation system that is able to control various components inside home via internet",
+        "System consists of mobile app which was developed in flutter where u can control the home applications through the app",
+        "Integration with Voice Assistants like Google Assistant, Alexa. Where u can control the home applications using the devices which support these voice assistants",
+        "Exposure:- Flutter, IOT, Assembly Language"
+      ]
+    },
+    {
+      "projectName": "Music Recommendation System",
+      "location": "Geethanjali College of Engineering, Hyderabad, India",
+      "start_date": "August 2021",
+      "end_date": "January 2022",
+      "projectDetails": [
+        "Developed an Emotion Recognition System using YOLO3 and TensorFlow where the model can recognise different types of emotions",
+        "Designed a web interface using Django framework",
+        "Capturing the users emotions using OpenCV and sending it the model feed. This CNN model here predicts the emotions  from the images and then recommends songs based on these predicted emotions",
+        "Based on these prediction user is then recommened songs on websites like YouTube, Spotify, Amazon Prime Music using their API’s"
+      ]
+    }
+  ],
+  "certifications": [
+    {
+      "name": "Salesforce Certified Administrator",
+      "issuing_organization": "Salesforce",
+      "issue_date": "April- 2025",
+      "expiration_date": null,
+      "credential_id": null,
+      "url": null
+    },
+    {
+      "name": "ITIL Foundation Certificate in IT Service Management",
+      "issuing_organization": null,
+      "issue_date": "April-2022",
+      "expiration_date": null,
+      "credential_id": null,
+      "url": null
+    }
+  ],
+  "extracurricular/achievements": [
+    {
+      "name": "Event Manager of Bhaswara 2021",
+      "type": "Event Manager",
+      "location": "GCET Hyd",
+      "date": "April 2021",
+      "description": null
+    },
+    {
+      "name": "Event Manager of Bhaswara 2022",
+      "type": "Event Manager",
+      "location": "GCET Hyd",
+      "date": "April 2022",
+      "description": null
+    }
+  ],
+  "languages": []
+}

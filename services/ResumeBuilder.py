@@ -3,8 +3,8 @@ import os
 from openai import OpenAI
 from dotenv import load_dotenv
 
-from src.FileOperations import FileOperations
-from src.Prompts import Prompts
+from utils.FileOperations import FileOperations
+from utils.Prompts import Prompts
 
 load_dotenv()
 
