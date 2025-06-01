@@ -4,13 +4,13 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    AWS_REGION_NAME: str = "us-east-1"  # Your AWS region
-    AWS_ACCESS_KEY_ID: Optional[str] = None  # Optional: For local dev if not using profiles
+    AWS_REGION_NAME: str = None  # Your AWS region
+    AWS_ACCESS_KEY_ID: Optional[str] = None# Optional: For local dev if not using profiles
     AWS_SECRET_ACCESS_KEY: Optional[str] = None  # Optional
-    DYNAMODB_ENDPOINT_URL: Optional[str] = None  # For DynamoDB Local, e.g., "http://localhost:8000"
+    DYNAMODB_ENDPOINT_URL: Optional[str] = "http://localhost:8000"  # For DynamoDB Local, e.g., "http://localhost:8000"
 
-    DYNAMODB_USERS_TABLE_NAME: str = "resumeAppUsers"
-    DYNAMODB_RESUMES_TABLE_NAME: str = "resumeAppResumes"
+    DYNAMODB_USERS_TABLE_NAME: str = "users"
+    DYNAMODB_RESUMES_TABLE_NAME: str = "resuma_data"
 
     # SECRET_KEY: str = "YOUR_VERY_SECRET_KEY_FOR_JWT"
     # ALGORITHM: str = "HS256"

@@ -1,4 +1,4 @@
-
+import uvicorn
 from mangum import Mangum
 
 from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, Form, APIRouter, Path
@@ -6,7 +6,6 @@ from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, F
 from fastapi.responses import StreamingResponse
 from typing import List, Annotated
 # from datetime import timedelta
-import io
 # No specific UUID type from FastAPI for path params, use str and validate/convert in CRUD if needed.
 
 # Adjust imports based on your project structure
@@ -252,7 +251,7 @@ async def create_new_user_endpoint(user_create_payload: UserModelCreate):
         created_user_in_db = await crud.create_user(user_data=user_create_payload)
         if not created_user_in_db:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not create user.")
-        return UserPublic.model_validate(created_user_in_db)
+        return UserPublic.model_validate(created_user_in_db.model_dump())
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
@@ -266,7 +265,7 @@ async def get_user_details_endpoint(user_id: str = Path(..., description="The ID
     user_db = await crud.get_user_by_id(user_id=user_id)
     if not user_db:
         raise HTTPException(status_code=404, detail="User not found")
-    return UserPublic.model_validate(user_db)
+    return UserPublic.model_validate(user_db.model_dump())
 
 
 @user_router.get("/{user_id}/metadata", response_model=UserAppMetadata)
@@ -409,3 +408,6 @@ async def delete_resume_endpoint(
 
 app.include_router(user_router)
 app.include_router(resume_router)  # This router has paths like /users/{user_id}/resumes/...
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8001)
