@@ -5,3 +5,5 @@ files/Extracted_schema*.json
 files/gen_ai*
 files/resume*
 *__pycache__*
+aws_lambda_artifact.zip
+dependencies/
