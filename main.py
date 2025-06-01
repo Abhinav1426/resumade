@@ -1,10 +1,7 @@
-import os
-from pprint import pprint
-
-from FileOperations import FileOperations
-from ResumeBuilder import ResumeBuilder
-from JsonToPDFBuilder import JsonToPDFBuilder
-from WebScraper import WebScraper
+from utils.FileOperations import FileOperations
+from services.ResumeBuilder import ResumeBuilder
+from services.JsonToPDFBuilder import JsonToPDFBuilder
+from utils.WebScraper import WebScraper
 
 if __name__ == '__main__':
     pdfPath="C:\\Users\\Abhinav\\Downloads\\resume (4).docx"
@@ -24,7 +21,7 @@ if __name__ == '__main__':
     # Save the JSON to a file
     file_ops.save_json_to_file(resume_json, file_name='resume_data')
 
-    # Get the job description from the linkedIn URL
+    # Get the job description from the LinkedIn URL
     job_description = web_scraper.linkedin_scrape_job_details("https://www.linkedin.com/jobs/view/4194296041")
     print("Job Description:\n", job_description)
 
