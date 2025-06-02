@@ -86,7 +86,7 @@ async def create_resume(user_id: str, resume_in: ResumeCreate) -> Optional[Resum
     timestamp = now_iso()
 
     # model_dump(by_alias=True) is important for fields with aliases
-    resume_data_dict = resume_in.resume_data.model_dump(by_alias=True)
+    resume_data_dict = resume_in.resume_data.model_dump(mode="json", by_alias=True)
 
     resume_item = ResumeInDB(
         user_id=user_id,
@@ -124,6 +124,7 @@ async def get_all_resumes_for_user(user_id: str) -> List[ResumeInDB]:
     resumes_table = get_resumes_table()
     try:
         response = resumes_table.query(
+            IndexName='user_id-index',
             KeyConditionExpression='user_id = :uid_val',
             ExpressionAttributeValues={':uid_val': user_id},
             ScanIndexForward=False  # Optional: to sort by sort key (resume_id) descending
