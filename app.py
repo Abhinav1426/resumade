@@ -97,7 +97,7 @@ async def upload_resume_file_and_create_for_user(
     contents = await resume_file.read()
     try:
         # TODO : Implement the actual LLM parsing logic here
-        parsed_resume_pydantic: ResumeSchema = await "llm_service.parse_resume_with_llm(contents)"  # Assuming this function exists and returns a ResumeSchema object
+        parsed_resume_pydantic: ResumeSchema =  # Assuming this function exists and returns a ResumeSchema object
     except Exception as e:
         print(f"LLM parsing error: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to parse resume with LLM: {str(e)}")
