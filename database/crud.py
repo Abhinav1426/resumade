@@ -82,10 +82,10 @@ async def get_user_by_username(username: str) -> Optional[UserInDB]:
 async def get_all_users_name_email() -> dict:
     users_table = get_users_table()
     try:
-        response = users_table.scan(ProjectionExpression="full_name, email")
+        response = users_table.scan(ProjectionExpression="user_id, full_name, email")
         items = response.get('Items', [])
         users = [
-            {"name": item.get("full_name", ""), "email": item.get("email", "")}
+            {"user_id": item.get("user_id", ""), "name": item.get("full_name", ""), "email": item.get("email", "")}
             for item in items if item.get("email")
         ]
         total_count = response.get('Count', len(items))

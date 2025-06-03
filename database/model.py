@@ -138,6 +138,7 @@ class UserPublic(UserBase): # For API responses (excluding sensitive info)
 #     username: Optional[str] = None # Subject of the token
 
 class UserSummary(BaseModel):
+    user_id: str
     name: str
     email: EmailStr
 
