@@ -1,7 +1,8 @@
+import io
 import uvicorn
 from mangum import Mangum
 
-from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, Form, APIRouter, Path
+from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, Form, APIRouter, Path, Header
 # from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import StreamingResponse
 from typing import List, Annotated
@@ -10,9 +11,9 @@ from typing import List, Annotated
 
 # Adjust imports based on your project structure
 from database.model import (
-    UserPublic,  JobDetailsInput, UserAppMetadata,
+    UserPublic, JobDetailsInput, UserAppMetadata,
     ResumeCreate, ResumeUpdate, ResumePublic, ResumeSchema, ResumeInDB,
-    UserCreate as UserModelCreate, UserInDB as UserInDBModel
+    UserCreate as UserModelCreate, UserInDB as UserInDBModel, UsersResponse, MetadataResponse
 )
 import database.crud as crud
 # import utils as auth
@@ -80,6 +81,7 @@ async def get_user_metadata_endpoint(user_id: str = Path(..., description="The I
         raise HTTPException(status_code=404, detail="User metadata not found or could not be constructed.")
     return UserAppMetadata(**user_meta_dict)
 
+
 def clean_none_strings(obj):
     if isinstance(obj, dict):
         return {k: clean_none_strings(v) for k, v in obj.items()}
@@ -88,6 +90,28 @@ def clean_none_strings(obj):
     elif obj is None:
         return ""
     return obj
+
+
+@user_router.get("/", response_model=UsersResponse, status_code=200)
+async def get_all_users_endpoint(master: str = Header(None),
+                                 _=Depends(lambda master=Header(None): check_master_header(master))):
+    result = await crud.get_all_users_name_email()
+    return result
+
+
+def check_master_header(master: str):
+    if master != "getmeall":
+        raise HTTPException(status_code=403, detail="Forbidden: your not authorized to access this endpoint.")
+
+
+@app.get("/metadata", response_model=MetadataResponse, status_code=200)
+async def get_metadata_endpoint(env: str = Header(None)):
+    result = await crud.get_and_update_metadata(env)
+    # Ensure prod_count is always present in the response
+    if "prod_count" not in result:
+        result["prod_count"] = 0
+    return result
+
 
 # --- Resume Endpoints (Nested under /users/{user_id}/resumes) ---
 @resume_router.post("/users/{user_id}/resumes/upload-and-create", response_model=ResumePublic,
@@ -108,7 +132,7 @@ async def upload_resume_file_and_create_for_user(
     contents = await resume_file.read()
     filename = resume_file.filename
     try:
-        text =  FileOperations().extract_text_from_file_bytes(contents, filename)
+        text = FileOperations().extract_text_from_file_bytes(contents, filename)
         if not text:
             raise HTTPException(status_code=400, detail="Could not extract text from the uploaded file.")
         print(f"Extracted text from file: {text[:100]}...")  # Log first 100 chars for debugging
@@ -116,7 +140,8 @@ async def upload_resume_file_and_create_for_user(
 
         # TODO : Implement the actual LLM parsing logic here
 
-        parsed_resume_pydantic: ResumeSchema =   resume_builder.parse_file_to_json(text)# Assuming this function exists and returns a ResumeSchema object
+        parsed_resume_pydantic: ResumeSchema = resume_builder.parse_file_to_json(
+            text)  # Assuming this function exists and returns a ResumeSchema object
     except Exception as e:
         print(f"LLM parsing error: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to parse resume with LLM: {str(e)}")
@@ -149,12 +174,11 @@ async def get_one_user_resume_json_endpoint(
     return ResumePublic(**resume_db.model_dump())
 
 
-
 @resume_router.put("/users/{user_id}/resumes/{resume_id}", response_model=ResumePublic)
 async def save_or_update_user_json_endpoint(
-    resume_update_payload: ResumeUpdate,
-    user_id: str = Path(..., description="The ID of the user"),
-    resume_id: str = Path(..., description="The ID of the resume"),
+        resume_update_payload: ResumeUpdate,
+        user_id: str = Path(..., description="The ID of the user"),
+        resume_id: str = Path(..., description="The ID of the resume"),
 ):
     updated_resume_db = await crud.update_resume(
         user_id=user_id, resume_id=resume_id, resume_update_data=resume_update_payload

@@ -7,6 +7,12 @@ from uuid import UUID as PyUUID, uuid4 # For UUID type
 def now_iso():
     return datetime.now(timezone.utc).isoformat()
 
+class MetadataResponse(BaseModel):
+    prod_count: int = 0
+    id: str = ""
+    class Config:
+        extra = "allow"  # Accept any extra fields in the response
+
 # --- Models from your JSON Schema (largely the same) ---
 # (Keep your existing Social, PersonalInformation, Experience, etc. models here)
 # ... (Your existing models from previous response)
@@ -131,6 +137,13 @@ class UserPublic(UserBase): # For API responses (excluding sensitive info)
 # class TokenData(BaseModel):
 #     username: Optional[str] = None # Subject of the token
 
+class UserSummary(BaseModel):
+    name: str
+    email: EmailStr
+
+class UsersResponse(BaseModel):
+    count: int
+    users: List[UserSummary]
 
 # --- Resume Models for API & DynamoDB ---
 class ResumeBase(BaseModel):
@@ -168,3 +181,4 @@ class UserAppMetadata(BaseModel): # Example for user-specific app settings
     username: str
     email: EmailStr
     preferences: Optional[Dict[str, Any]] = None
+
