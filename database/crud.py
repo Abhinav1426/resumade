@@ -187,13 +187,16 @@ async def update_resume(
     update_expression = ", ".join(update_expression_parts)
 
     try:
-        response = resumes_table.update_item(
-            Key={'user_id': user_id, 'resume_id': resume_id},
-            UpdateExpression=update_expression,
-            ExpressionAttributeValues=expression_attribute_values,
-            ExpressionAttributeNames=expression_attribute_names if expression_attribute_names else None,
-            ReturnValues="ALL_NEW"  # Gets all attributes of the item after the update
-        )
+        update_item_kwargs = {
+            "Key": {'user_id': user_id, 'resume_id': resume_id},
+            "UpdateExpression": update_expression,
+            "ExpressionAttributeValues": expression_attribute_values,
+            "ReturnValues": "ALL_NEW"
+        }
+        if expression_attribute_names:
+            update_item_kwargs["ExpressionAttributeNames"] = expression_attribute_names
+
+        response = resumes_table.update_item(**update_item_kwargs)
         updated_item = response.get('Attributes')
         return ResumeInDB(**updated_item) if updated_item else None
     except ClientError as e:

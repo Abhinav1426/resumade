@@ -19,8 +19,8 @@ import database.crud as crud
 # import utils as auth
 # from services import llm_service, pdf_service
 from core.config import settings
-from services import ResumeBuilder
-from utils import FileOperations
+from services import ResumeBuilder, JsonToPDFBuilder
+from utils import FileOperations, WebScraper
 
 # from database.dynamodb_client import create_users_table_if_not_exists, create_resumes_table_if_not_exists
 
@@ -205,7 +205,7 @@ async def create_user_resume_endpoint(
         raise HTTPException(status_code=500, detail="Could not create new resume.")
     return ResumePublic.model_validate(created_resume_db.model_dump())
 
-@resume_router.post("/users/{user_id}/resumes/{resume_id}/tailor", response_model=ResumeSchema)
+@resume_router.post("/users/{user_id}/resumes/{resume_id}/tailor", response_model=ResumePublic)
 async def tailor_resume_for_job_endpoint(
         job_details: JobDetailsInput,
         user_id: str = Path(..., description="The ID of the user"),
@@ -217,12 +217,51 @@ async def tailor_resume_for_job_endpoint(
 
     existing_resume_pydantic = existing_resume_db.resume_data
     try:
-        #Todo : Implement the actual LLM tailoring logic here
-        tailored_resume_pydantic: ResumeSchema = None
+        # Prepare job details object: if job_description is present, use its text; if job_link is present, fetch description from link
+        job_details_text = None
+        if getattr(job_details, "description", None):
+            job_details_text = job_details.description
+        elif getattr(job_details, "job_link", None):
+            # Assume you have a function called fetch_job_description_from_link(link)
+            job_details_text = WebScraper().linkedin_scrape_job_details(job_details.job_link).get("description", None)
+            if not job_details_text:
+                raise HTTPException(status_code=400, detail="Could not fetch job description from the provided link.")
+        if not job_details_text:
+            raise HTTPException(status_code=400, detail="Job description or job link is required for tailoring.")
+
+        # Call the ResumeBuilder service to tailor the resume
+        tailored_resume_pydantic: ResumeSchema = ResumeBuilder('google').build_resume_json(existing_resume_pydantic.model_dump(),job_details_text,getattr(job_details, "custom_prompt", None))
+        #Checking if the tailored resume is empty or None
+        if not tailored_resume_pydantic:
+            raise HTTPException(status_code=400, detail="Tailored resume is empty or invalid.")
+
+        # Check if update the existing resume or create a new one version
+        if job_details.update_existing_resume:
+            # Update the existing resume with the tailored data
+            updated_resume_db = await crud.update_resume(
+                user_id=user_id, resume_id=resume_id,
+                resume_update_data=ResumeUpdate(title=existing_resume_db.title, resume_data=tailored_resume_pydantic)
+            )
+            if not updated_resume_db:
+                raise HTTPException(status_code=500, detail="Failed to update existing resume with tailored data.")
+            tailored_resume = ResumePublic.model_validate(updated_resume_db.model_dump())
+        else:
+            # Create a new resume version with the tailored data
+            if job_details.title is None or job_details.title.strip() == "" or job_details.title == "Untitled Resume":
+                existing_resume_db.title = f"{existing_resume_db.title} - Tailored"
+            else:
+                existing_resume_db.title = job_details.title
+            new_resume_to_create = ResumeCreate(title=existing_resume_db.title,
+                                                 resume_data=tailored_resume_pydantic)
+            created_resume_db = await crud.create_resume(user_id=user_id, resume_in=new_resume_to_create)
+            if not created_resume_db:
+                raise HTTPException(status_code=500, detail="Failed to create new tailored resume.")
+            tailored_resume = ResumePublic.model_validate(created_resume_db.model_dump())
+
     except Exception as e:
         print(f"LLM tailoring error: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to tailor resume with LLM: {str(e)}")
-    return tailored_resume_pydantic
+    return tailored_resume
 
 
 @resume_router.get("/users/{user_id}/resumes/{resume_id}/download", response_class=StreamingResponse)
@@ -236,13 +275,13 @@ async def download_resume_as_pdf_endpoint(
 
     try:
         # TODO : Implement the actual PDF generation logic here
-        pdf_bytes: bytes = await bytes([ord(char) for char in "testing"])  # Placeholder for actual PDF generation logic
+        pdf_bytes: bytes = JsonToPDFBuilder().build(resume_db.resume_data.model_dump()) or b""   # Assuming this function exists and returns bytes
     except Exception as e:
         print(f"PDF generation error: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to generate PDF: {str(e)}")
 
     safe_title = "".join(c if c.isalnum() or c in (' ', '.', '-') else '_' for c in (resume_db.title or "resume"))
-    filename = f"{safe_title.replace(' ', '_')}_{resume_id[:8]}.pdf"
+    filename = f"{safe_title.replace(' ', '_')}.pdf"
 
     return StreamingResponse(
         io.BytesIO(pdf_bytes),

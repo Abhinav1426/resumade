@@ -99,7 +99,7 @@ class ResumeBuilder:
             case _:
                 client = OpenAI(api_key=os.getenv('DEEPSEEK_API_KEY'), base_url=os.getenv('DEEPSEEK_URL'))
                 model = "deepseek-chat"
-        print(f'Providers : {llm_provider} \n model : {model}')
+        print(f'Providers : {llm_provider} \nmodel : {model}')
         self.client, self.model = client, model
         return client , model
 
@@ -163,7 +163,7 @@ class ResumeBuilder:
                 target_json_schema=json.dumps(self.json_schema, indent=2)
             )
         if user_prompt is not None:
-            prompt = f"{prompt}\n\n{user_prompt}"
+            prompt = f"{prompt}\n\n'The below are user specified prompts you need to strictly follow them : '\n\n{user_prompt}"
         message = [
             {"role": "system", "content": system_instruction},
             {"role": "user", "content": prompt},

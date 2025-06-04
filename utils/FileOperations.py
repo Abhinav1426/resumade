@@ -2,11 +2,14 @@ import json
 import os
 from datetime import datetime
 import fitz
-import pytesseract
-from PIL import Image
+# import pytesseract
+# from PIL import Image
 import io
 from docx import Document
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
+
+from package.fastapi import HTTPException
+
 
 class FileOperations:
     """File Operations for Resume Builder"""
@@ -47,14 +50,18 @@ class FileOperations:
                         uri = link['uri']
                         full_text += f"[Link found on Page {page_num}]: {uri}\n"
             else:
-                print(f"[Page {page_num}] No text found — using OCR.")
-                # Render page as image
-                pix = page.get_pixmap(dpi=300)
-                img = Image.open(io.BytesIO(pix.tobytes("png")))
-
-                # Perform OCR on the image
-                ocr_text = pytesseract.image_to_string(img)
-                full_text += f"\n\n--- Page {page_num} (OCR) ---\n{ocr_text}"
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"No text found on page {page_num}. Consider using OCR for image-based PDFs."
+                )
+                # print(f"[Page {page_num}] No text found — using OCR.")
+                # # Render page as image
+                # pix = page.get_pixmap(dpi=300)
+                # img = Image.open(io.BytesIO(pix.tobytes("png")))
+                #
+                # # Perform OCR on the image
+                # ocr_text = pytesseract.image_to_string(img)
+                # full_text += f"\n\n--- Page {page_num} (OCR) ---\n{ocr_text}"
 
         doc.close()
         return full_text
