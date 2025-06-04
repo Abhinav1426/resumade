@@ -2,10 +2,10 @@ import io
 import uvicorn
 from mangum import Mangum
 
-from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, Form, APIRouter, Path, Header
+from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, Form, APIRouter, Path, Header, Query
 # from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import StreamingResponse
-from typing import List, Annotated
+from typing import List, Annotated, Optional
 # from datetime import timedelta
 # No specific UUID type from FastAPI for path params, use str and validate/convert in CRUD if needed.
 
@@ -174,11 +174,13 @@ async def get_one_user_resume_json_endpoint(
     return ResumePublic(**resume_db.model_dump())
 
 
+# For updating an existing resume (PUT)
 @resume_router.put("/users/{user_id}/resumes/{resume_id}", response_model=ResumePublic)
-async def save_or_update_user_json_endpoint(
-        resume_update_payload: ResumeUpdate,
-        user_id: str = Path(..., description="The ID of the user"),
-        resume_id: str = Path(..., description="The ID of the resume"),
+async def update_user_resume_endpoint(
+    resume_update_payload: ResumeUpdate,
+    user_id: str = Path(..., description="The ID of the user"),
+    resume_id: str = Path(..., description="The ID of the resume"),
+    title: str = "Untitled Resume"
 ):
     updated_resume_db = await crud.update_resume(
         user_id=user_id, resume_id=resume_id, resume_update_data=resume_update_payload
@@ -187,6 +189,21 @@ async def save_or_update_user_json_endpoint(
         raise HTTPException(status_code=404, detail="Resume not found or failed to update")
     return ResumePublic.model_validate(updated_resume_db.model_dump())
 
+# For creating a new resume (POST)
+@resume_router.post("/users/{user_id}/resumes/", response_model=ResumePublic)
+async def create_user_resume_endpoint(
+    resume_update_payload: ResumeUpdate,
+    user_id: str = Path(..., description="The ID of the user"),
+    title: str = "Untitled Resume"
+):
+    user = await crud.get_user_by_id(user_id=user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    resume_to_create = ResumeCreate(title=title, resume_data=resume_update_payload.resume_data or ResumeSchema())
+    created_resume_db = await crud.create_resume(user_id=user_id, resume_in=resume_to_create)
+    if not created_resume_db:
+        raise HTTPException(status_code=500, detail="Could not create new resume.")
+    return ResumePublic.model_validate(created_resume_db.model_dump())
 
 @resume_router.post("/users/{user_id}/resumes/{resume_id}/tailor", response_model=ResumeSchema)
 async def tailor_resume_for_job_endpoint(
