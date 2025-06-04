@@ -8,7 +8,7 @@ import io
 from docx import Document
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 
-from package.fastapi import HTTPException
+from fastapi import HTTPException
 
 
 class FileOperations:
