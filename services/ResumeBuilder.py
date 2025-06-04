@@ -1,8 +1,8 @@
 import json
 import os
+import httpx
 from openai import OpenAI
 from dotenv import load_dotenv
-
 from utils.FileOperations import FileOperations
 from utils.Prompts import Prompts
 
@@ -15,6 +15,62 @@ class ResumeBuilder:
         self.client, self.model = self.create_client(llm_provider)
         self.prompts = Prompts()
         self.json_schema = FileOperations().load_schema_file("data/schema.json")
+
+    @staticmethod
+    def call_gemini_and_extract_json(prompt: str, model_name: str = None) -> dict:
+        """
+        Calls the Google Gemini API synchronously with the given prompt and extracts the JSON object from the response.
+        Raises exceptions for HTTP errors or malformed responses.
+        """
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise RuntimeError("GEMINI_API_KEY not set in environment variables.")
+        model = model_name or os.getenv("GEMINI_MODEL_NAME", "gemma-3-27b-it")
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+
+        headers = {"Content-Type": "application/json"}
+        data = {
+            "contents": [
+                {
+                    "parts": [
+                        {"text": prompt}
+                    ]
+                }
+            ]
+        }
+
+        with httpx.Client() as client:
+            resp = client.post(url, headers=headers, json=data)
+            if resp.status_code != 200:
+                raise RuntimeError(f"Gemini API error: {resp.status_code} - {resp.text}")
+            response = resp.json()
+
+        try:
+            candidates = response.get("candidates")
+            if not candidates or not isinstance(candidates, list):
+                raise ValueError("No candidates found in Gemini response.")
+            content = candidates[0].get("content")
+            if not content or "parts" not in content or not content["parts"]:
+                raise ValueError("No content parts found in Gemini response.")
+            text = content["parts"][0].get("text")
+            if not text:
+                raise ValueError("No text found in Gemini response part.")
+            # Remove code block markers if present
+            if text.startswith("```json"):
+                text = text.removeprefix("```json").removesuffix("```").strip()
+            elif text.startswith("```"):
+                text = text.removeprefix("```").removesuffix("```").strip()
+            return json.loads(text)
+        except Exception as e:
+            raise RuntimeError(f"Failed to extract JSON from Gemini response: {e}")
+
+    def parse_file_to_json_gemini(self, text):
+        prompts = Prompts()
+        base_prompt = prompts.get_prompt("EXTRACT_TO_SCHEMA")
+        schema_instruction = base_prompt.format(SCHEMA=json.dumps(self.json_schema, indent=2))
+        # Concatenate system and user prompt for Gemini
+        prompt = f"{schema_instruction}\n{text}"
+        return self.call_gemini_and_extract_json(prompt)
 
     @staticmethod
     def openAi_llm_caller(client,model,message):

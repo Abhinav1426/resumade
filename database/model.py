@@ -7,12 +7,18 @@ from uuid import UUID as PyUUID, uuid4 # For UUID type
 def now_iso():
     return datetime.now(timezone.utc).isoformat()
 
+class MetadataResponse(BaseModel):
+    prod_count: int = 0
+    id: str = ""
+    class Config:
+        extra = "allow"  # Accept any extra fields in the response
+
 # --- Models from your JSON Schema (largely the same) ---
 # (Keep your existing Social, PersonalInformation, Experience, etc. models here)
 # ... (Your existing models from previous response)
 class Social(BaseModel):
     name: str
-    link: HttpUrl
+    link: str
 
 class PersonalInformation(BaseModel):
     name: str
@@ -45,7 +51,7 @@ class SkillItemDetail(BaseModel):
 
 class ExternalSource(BaseModel):
     name: str
-    link: HttpUrl
+    link: str
 
 class Project(BaseModel):
     projectName: str
@@ -53,7 +59,7 @@ class Project(BaseModel):
     location: str
     start_date: Optional[str] = None
     end_date: Optional[str] = None
-    url: Optional[HttpUrl] = None
+    url: Optional[str] = None
     projectDetails: List[str]
     externalSources: Optional[List[ExternalSource]] = None
     technologiesUsed: Optional[List[str]] = None
@@ -64,7 +70,7 @@ class Certification(BaseModel):
     issue_date: str
     expiration_date: Optional[str] = None
     credential_id: Optional[str] = None
-    url: Optional[HttpUrl] = None
+    url: Optional[str] = None
 
 class Award(BaseModel):
     name: str
@@ -84,17 +90,19 @@ class LanguageItem(BaseModel):
     language: str
     proficiency: str
 
-class ResumeSchema(BaseModel): # This is the structure for the JSONB field
-    personal_information: PersonalInformation
+
+class ResumeSchema(BaseModel):
+    personal_information: Optional[PersonalInformation] = None
     summary: Optional[str] = None
     experiences: Optional[List[Experience]] = None
-    education: List[EducationItem]
-    skills: List[SkillItemDetail]
+    education: Optional[List[EducationItem]] = None
+    skills: Optional[List[SkillItemDetail]] = None
     projects: Optional[List[Project]] = None
     certifications: Optional[List[Certification]] = None
     awards: Optional[List[Award]] = None
     extracurricular_achievements: Optional[List[ExtracurricularAchievement]] = Field(default=None, alias="extracurricular/achievements")
     languages: Optional[List[LanguageItem]] = None
+
 
     class Config:
         populate_by_name = True
@@ -129,6 +137,14 @@ class UserPublic(UserBase): # For API responses (excluding sensitive info)
 # class TokenData(BaseModel):
 #     username: Optional[str] = None # Subject of the token
 
+class UserSummary(BaseModel):
+    user_id: str
+    name: str
+    email: EmailStr
+
+class UsersResponse(BaseModel):
+    count: int
+    users: List[UserSummary]
 
 # --- Resume Models for API & DynamoDB ---
 class ResumeBase(BaseModel):
@@ -157,7 +173,7 @@ class ResumePublic(ResumeBase): # For API responses
 
 # --- Other API Specific Models ---
 class JobDetailsInput(BaseModel):
-    job_link: Optional[HttpUrl] = None
+    job_link: Optional[str] = None
     job_description: Optional[str] = None
     custom_prompt: Optional[str] = None
 
@@ -166,3 +182,4 @@ class UserAppMetadata(BaseModel): # Example for user-specific app settings
     username: str
     email: EmailStr
     preferences: Optional[Dict[str, Any]] = None
+

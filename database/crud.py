@@ -2,7 +2,7 @@ import uuid
 from typing import List, Optional, Dict, Any
 from botocore.exceptions import ClientError
 
-from database.dynamodb_client import get_users_table, get_resumes_table
+from database.dynamodb_client import get_users_table, get_resumes_table, get_metadata_table
 from database.model import (
     UserCreate, UserInDB, ResumeCreate, ResumeUpdate, ResumeInDB, now_iso
 )
@@ -79,6 +79,22 @@ async def get_user_by_username(username: str) -> Optional[UserInDB]:
         return None
 
 
+async def get_all_users_name_email() -> dict:
+    users_table = get_users_table()
+    try:
+        response = users_table.scan(ProjectionExpression="user_id, full_name, email")
+        items = response.get('Items', [])
+        users = [
+            {"user_id": item.get("user_id", ""), "name": item.get("full_name", ""), "email": item.get("email", "")}
+            for item in items if item.get("email")
+        ]
+        total_count = response.get('Count', len(items))
+        return {"count": total_count, "users": users}
+    except ClientError as e:
+        print(f"Error scanning users table: {e}")
+        return {"count": 0, "users": []}
+
+
 # --- Resume CRUD with DynamoDB ---
 async def create_resume(user_id: str, resume_in: ResumeCreate) -> Optional[ResumeInDB]:
     resumes_table = get_resumes_table()
@@ -86,7 +102,7 @@ async def create_resume(user_id: str, resume_in: ResumeCreate) -> Optional[Resum
     timestamp = now_iso()
 
     # model_dump(by_alias=True) is important for fields with aliases
-    resume_data_dict = resume_in.resume_data.model_dump(by_alias=True)
+    resume_data_dict = resume_in.resume_data.model_dump(mode="json", by_alias=True)
 
     resume_item = ResumeInDB(
         user_id=user_id,
@@ -124,6 +140,7 @@ async def get_all_resumes_for_user(user_id: str) -> List[ResumeInDB]:
     resumes_table = get_resumes_table()
     try:
         response = resumes_table.query(
+            IndexName='user_id-index',
             KeyConditionExpression='user_id = :uid_val',
             ExpressionAttributeValues={':uid_val': user_id},
             ScanIndexForward=False  # Optional: to sort by sort key (resume_id) descending
@@ -214,3 +231,26 @@ async def get_user_app_metadata(user_id: str) -> Optional[Dict[str, Any]]:
             "preferences": {"theme": "light", "notifications_ddb": True}  # Example
         }
     return None
+
+
+async def get_and_update_metadata(env: str = None) -> dict:
+    table = get_metadata_table()
+    key = {"id": "prod_metadata"}  # Assuming single row with id 'prod_metadata'
+    try:
+        if env == "prod":
+            # Atomically increment the visit count
+            response = table.update_item(
+                Key=key,
+                UpdateExpression="SET prod_count = if_not_exists(prod_count, :zero) + :inc",
+                ExpressionAttributeValues={":inc": 1, ":zero": 0},
+                ReturnValues="ALL_NEW"
+            )
+            item = response.get("Attributes", {})
+        else:
+            response = table.get_item(Key=key)
+            item = response.get("Item", {})
+        return item
+    except Exception as e:
+        print(f"Error accessing metadata table: {e}")
+        return {"error": str(e)}
+
