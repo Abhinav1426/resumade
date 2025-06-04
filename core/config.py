@@ -11,6 +11,7 @@ class Settings(BaseSettings):
 
     DYNAMODB_USERS_TABLE_NAME: str = "users"
     DYNAMODB_RESUMES_TABLE_NAME: str = "resuma_data"
+    DYNAMODB_METADATA_TABLE_NAME : str = "metadata"
 
     # SECRET_KEY: str = "YOUR_VERY_SECRET_KEY_FOR_JWT"
     # ALGORITHM: str = "HS256"

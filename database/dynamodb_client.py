@@ -104,3 +104,7 @@ def get_users_table():
 
 def get_resumes_table():
     return dynamodb_resource.Table(settings.DYNAMODB_RESUMES_TABLE_NAME)
+
+def get_metadata_table():
+    return dynamodb_resource.Table(settings.DYNAMODB_METADATA_TABLE_NAME)
+
