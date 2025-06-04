@@ -4,19 +4,19 @@ from core.config import settings
 import time
 
 # --- DynamoDB Client Initialization ---
+import os
 def get_dynamodb_resource():
-    if settings.DYNAMODB_ENDPOINT_URL: # For DynamoDB Local
+    env = os.environ.get("ENV") or "local"
+    if env == "local":
         print(f"Connecting to DynamoDB Local at {settings.DYNAMODB_ENDPOINT_URL}")
         return boto3.resource(
             'dynamodb',
-            # endpoint_url=settings.DYNAMODB_ENDPOINT_URL,
-            region_name=settings.AWS_REGION_NAME, # Still good practice to set region
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID or 'fakeMyKeyId', # Dummy for local
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY or 'fakeSecretAccessKey' # Dummy for local
+            region_name=settings.AWS_REGION_NAME,
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID or 'fakeMyKeyId',
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY or 'fakeSecretAccessKey'
         )
-    else: # For AWS DynamoDB
+    else:
         print(f"Connecting to AWS DynamoDB in region {settings.AWS_REGION_NAME}")
-        # Ensure AWS credentials are configured in your environment (e.g., via aws configure, instance profile, or env vars)
         return boto3.resource('dynamodb', region_name=settings.AWS_REGION_NAME)
 
 dynamodb_resource = get_dynamodb_resource()

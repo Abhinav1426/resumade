@@ -9,3 +9,5 @@ aws_lambda_artifact.zip
 dependencies/
 package/
 v.zip
+python/
+python*
