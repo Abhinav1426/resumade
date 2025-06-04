@@ -176,6 +176,8 @@ class JobDetailsInput(BaseModel):
     job_link: Optional[str] = None
     job_description: Optional[str] = None
     custom_prompt: Optional[str] = None
+    update_existing_resume: Optional[bool] = False # Whether to update an existing resume with this job description
+    title: str = Field(default="Untitled Resume", max_length=100)
 
 class UserAppMetadata(BaseModel): # Example for user-specific app settings
     user_id: str

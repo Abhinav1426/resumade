@@ -23,15 +23,15 @@ class JsonToPDFBuilder:
         # Default rendering order
         self.default_order = [
             'personal_info',
+            'summary',
             'education',
             'experiences',
             'skills',
+            'certifications',
             'projects',
             'extras',
             'languages',
-            'summary',
             'awards',
-            'certifications',
         ]
 
     @staticmethod
