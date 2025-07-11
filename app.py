@@ -35,7 +35,7 @@ from utils import FileOperations, WebScraper
 #     print("DynamoDB tables checked/created.")
 
 
-app = FastAPI(title="Resume Builder API with DynamoDB (No Auth)")
+app = FastAPI(title="Resumade.Ai")
 handler = Mangum(app)  # For AWS Lambda compatibility
 
 # --- Routers ---
