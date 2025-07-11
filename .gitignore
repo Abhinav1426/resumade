@@ -12,3 +12,4 @@ v.zip
 python/
 python*
 AWS/
+.venv/
