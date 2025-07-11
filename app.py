@@ -3,45 +3,104 @@ import uvicorn
 from mangum import Mangum
 
 from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, Form, APIRouter, Path, Header, Query
-# from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import StreamingResponse
 from typing import List, Annotated, Optional
-# from datetime import timedelta
-# No specific UUID type from FastAPI for path params, use str and validate/convert in CRUD if needed.
-
-# Adjust imports based on your project structure
 from database.model import (
     UserPublic, JobDetailsInput, UserAppMetadata,
     ResumeCreate, ResumeUpdate, ResumePublic, ResumeSchema, ResumeInDB,
     UserCreate as UserModelCreate, UserInDB as UserInDBModel, UsersResponse, MetadataResponse
 )
 import database.crud as crud
-# import utils as auth
+from utils import auth
+import re
+# --- Authentication Models ---
+from pydantic import BaseModel
+
+
 # from services import llm_service, pdf_service
 from core.config import settings
 from services import ResumeBuilder, JsonToPDFBuilder
 from utils import FileOperations, WebScraper
 
-# from database.dynamodb_client import create_users_table_if_not_exists, create_resumes_table_if_not_exists
 
-
-# --- DynamoDB Table Initialization Event ---
-# @app.on_event("startup")
-# async def startup_dynamodb_tables():
-#     print("Application startup: Ensuring DynamoDB tables exist...")
-#     # These functions are idempotent
-#     create_users_table_if_not_exists()
-#     create_resumes_table_if_not_exists()
-#     print("DynamoDB tables checked/created.")
 
 
 app = FastAPI(title="Resumade.Ai")
+
 handler = Mangum(app)  # For AWS Lambda compatibility
 
 # --- Routers ---
+auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
 user_router = APIRouter(prefix="/users", tags=["Users"])
 resume_router = APIRouter(tags=["Resumes"])  # Will be nested under users
 
+
+class LoginRequest(BaseModel):
+    identifier: str
+    password: str
+
+class LoginResponse(BaseModel):
+    message: str
+    user: UserPublic
+    access_token: str
+    token_type: str
+    expires_at: str
+
+class LogoutResponse(BaseModel):
+    message: str
+# --- Authentication Endpoints ---
+
+
+
+@auth_router.post("/login", response_model=LoginResponse)
+async def login_endpoint(login_request: LoginRequest):
+    identifier = login_request.identifier
+    password = login_request.password
+
+
+    # Use regex to check for valid email format
+    email_regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
+    if re.match(email_regex, identifier):
+        # Always support email login, fallback to manual scan if not present
+        get_user_by_email = getattr(crud, "get_user_by_email", None)
+        if get_user_by_email:
+            user = await get_user_by_email(identifier)
+        else:
+            # Fallback: scan all users and match email
+            all_users = await crud.get_all_users_name_email()
+            user = None
+            for u in all_users.get("users", []):
+                if u.get("email", "").lower() == identifier.lower():
+                    user = await crud.get_user_by_id(u["user_id"])
+                    break
+            if not user:
+                raise HTTPException(status_code=401, detail="Email not found.")
+    else:
+        user = await crud.get_user_by_username(identifier)
+
+    if not user or not auth.verify_password(password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect credentials",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    if user.disabled:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User account is disabled")
+
+    access_token, expires_at = auth.create_jwt_token(user.user_id)
+    return LoginResponse(
+        message="Login successful",
+        user=UserPublic.model_validate(user.model_dump()),
+        access_token=access_token,
+        token_type="bearer",
+        expires_at=expires_at
+    )
+
+@auth_router.post("/logout", response_model=LogoutResponse)
+async def logout_endpoint():
+    return LogoutResponse(message="Logout successful. Please discard your access token.")
+
+app.include_router(auth_router)
 
 # --- User Endpoints ---
 @user_router.post(".create", response_model=UserPublic, status_code=status.HTTP_201_CREATED)
@@ -60,7 +119,7 @@ async def create_new_user_endpoint(user_create_payload: UserModelCreate):
 
 
 @user_router.get("/{user_id}", response_model=UserPublic)
-async def get_user_details_endpoint(user_id: str = Path(..., description="The ID of the user to retrieve")):
+async def get_user_details_endpoint(user_id: str = Path(..., description="The ID of the user to retrieve"), current_user=Depends(auth.get_current_user)):
     user_db = await crud.get_user_by_id(user_id=user_id)
     if not user_db:
         raise HTTPException(status_code=404, detail="User not found")
@@ -68,7 +127,7 @@ async def get_user_details_endpoint(user_id: str = Path(..., description="The ID
 
 
 @user_router.get("/{user_id}/metadata", response_model=UserAppMetadata)
-async def get_user_metadata_endpoint(user_id: str = Path(..., description="The ID of the user")):
+async def get_user_metadata_endpoint(user_id: str = Path(..., description="The ID of the user"), current_user=Depends(auth.get_current_user)):
     user_meta_dict = await crud.get_user_app_metadata(user_id=user_id)  # Use the renamed function
     if not user_meta_dict:
         # Check if user exists at all
@@ -118,6 +177,7 @@ async def get_metadata_endpoint(env: str = Header(None)):
                     status_code=status.HTTP_201_CREATED)
 async def upload_resume_file_and_create_for_user(
         user_id: str = Path(..., description="The ID of the user"),
+        current_user=Depends(auth.get_current_user),
         title: Annotated[str, Form()] = "Uploaded Resume",
         resume_file: UploadFile = File(...)
 ):
@@ -155,7 +215,7 @@ async def upload_resume_file_and_create_for_user(
 
 
 @resume_router.get("/users/{user_id}/resumes", response_model=List[ResumePublic])
-async def get_list_of_user_resumes_endpoint(user_id: str = Path(..., description="The ID of the user")):
+async def get_list_of_user_resumes_endpoint(user_id: str = Path(..., description="The ID of the user"), current_user=Depends(auth.get_current_user)):
     user = await crud.get_user_by_id(user_id)  # Optional: check if user exists
     if not user:
         raise HTTPException(status_code=404, detail=f"User with id {user_id} not found.")
@@ -166,6 +226,7 @@ async def get_list_of_user_resumes_endpoint(user_id: str = Path(..., description
 @resume_router.get("/users/{user_id}/resumes/{resume_id}", response_model=ResumePublic)
 async def get_one_user_resume_json_endpoint(
         user_id: str = Path(..., description="The ID of the user"),
+        current_user=Depends(auth.get_current_user),
         resume_id: str = Path(..., description="The ID of the resume")
 ):
     resume_db = await crud.get_resume_by_id(user_id=user_id, resume_id=resume_id)
@@ -179,6 +240,7 @@ async def get_one_user_resume_json_endpoint(
 async def update_user_resume_endpoint(
     resume_update_payload: ResumeUpdate,
     user_id: str = Path(..., description="The ID of the user"),
+    current_user=Depends(auth.get_current_user),
     resume_id: str = Path(..., description="The ID of the resume"),
     title: str = "Untitled Resume"
 ):
@@ -194,6 +256,7 @@ async def update_user_resume_endpoint(
 async def create_user_resume_endpoint(
     resume_update_payload: ResumeUpdate,
     user_id: str = Path(..., description="The ID of the user"),
+    current_user=Depends(auth.get_current_user),
     title: str = "Untitled Resume"
 ):
     user = await crud.get_user_by_id(user_id=user_id)
@@ -209,6 +272,7 @@ async def create_user_resume_endpoint(
 async def tailor_resume_for_job_endpoint(
         job_details: JobDetailsInput,
         user_id: str = Path(..., description="The ID of the user"),
+        current_user=Depends(auth.get_current_user),
         resume_id: str = Path(..., description="The ID of the resume")
 ):
     existing_resume_db = await crud.get_resume_by_id(user_id=user_id, resume_id=resume_id)
@@ -267,6 +331,7 @@ async def tailor_resume_for_job_endpoint(
 @resume_router.get("/users/{user_id}/resumes/{resume_id}/download", response_class=StreamingResponse)
 async def download_resume_as_pdf_endpoint(
         user_id: str = Path(..., description="The ID of the user"),
+        current_user=Depends(auth.get_current_user),
         resume_id: str = Path(..., description="The ID of the resume")
 ):
     resume_db = await crud.get_resume_by_id(user_id=user_id, resume_id=resume_id)
@@ -293,6 +358,7 @@ async def download_resume_as_pdf_endpoint(
 @resume_router.delete("/users/{user_id}/resumes/{resume_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_resume_endpoint(
         user_id: str = Path(..., description="The ID of the user"),
+        current_user=Depends(auth.get_current_user),
         resume_id: str = Path(..., description="The ID of the resume")
 ):
     deleted = await crud.delete_resume(user_id=user_id, resume_id=resume_id)
