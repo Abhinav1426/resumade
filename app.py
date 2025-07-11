@@ -22,7 +22,11 @@ from core.config import settings
 from services import ResumeBuilder, JsonToPDFBuilder
 from utils import FileOperations, WebScraper
 
-app = FastAPI(title="Resume Builder API with DynamoDB (No Auth)")
+
+
+
+app = FastAPI(title="Resumade.Ai")
+
 handler = Mangum(app)  # For AWS Lambda compatibility
 
 # --- Routers ---
