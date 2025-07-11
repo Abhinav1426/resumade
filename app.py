@@ -44,13 +44,13 @@ resume_router = APIRouter(tags=["Resumes"])  # Will be nested under users
 
 
 # --- User Endpoints ---
-@user_router.post("/", response_model=UserPublic, status_code=status.HTTP_201_CREATED)
+@user_router.post(".create", response_model=UserPublic, status_code=status.HTTP_201_CREATED)
 async def create_new_user_endpoint(user_create_payload: UserModelCreate):
     try:
         created_user_in_db = await crud.create_user(user_data=user_create_payload)
         if not created_user_in_db:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not create user.")
-        return UserPublic.model_validate(created_user_in_db)
+        return UserPublic.model_validate(created_user_in_db.model_dump())
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
@@ -92,7 +92,7 @@ def clean_none_strings(obj):
     return obj
 
 
-@user_router.get("/", response_model=UsersResponse, status_code=200)
+@user_router.get(".getall", response_model=UsersResponse, status_code=200)
 async def get_all_users_endpoint(master: str = Header(None),
                                  _=Depends(lambda master=Header(None): check_master_header(master))):
     result = await crud.get_all_users_name_email()
@@ -154,7 +154,7 @@ async def upload_resume_file_and_create_for_user(
     return ResumePublic.model_validate(created_resume_db.model_dump())
 
 
-@resume_router.get("/users/{user_id}/resumes/", response_model=List[ResumePublic])
+@resume_router.get("/users/{user_id}/resumes", response_model=List[ResumePublic])
 async def get_list_of_user_resumes_endpoint(user_id: str = Path(..., description="The ID of the user")):
     user = await crud.get_user_by_id(user_id)  # Optional: check if user exists
     if not user:
@@ -190,7 +190,7 @@ async def update_user_resume_endpoint(
     return ResumePublic.model_validate(updated_resume_db.model_dump())
 
 # For creating a new resume (POST)
-@resume_router.post("/users/{user_id}/resumes/", response_model=ResumePublic)
+@resume_router.post("/users/{user_id}/resumes", response_model=ResumePublic)
 async def create_user_resume_endpoint(
     resume_update_payload: ResumeUpdate,
     user_id: str = Path(..., description="The ID of the user"),
