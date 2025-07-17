@@ -14,9 +14,9 @@ async def create_user(user_data: UserCreate) -> Optional[UserInDB]:
     users_table = get_users_table()
 
     # Check if username already exists using GSI
-    existing_user_by_username = await get_user_by_username(user_data.username)
-    if existing_user_by_username:
-        raise ValueError(f"Username '{user_data.username}' already exists.")
+    existing_user = await get_user_by_username_or_mail(user_data.username)
+    if existing_user:
+        raise ValueError(f"{existing_user}' already exists.")
 
     # Optionally, check for email existence if you have a GSI for email or accept slower scans for this check
     # For simplicity, we'll skip a direct email existence check here unless a GSI is on email.
@@ -51,10 +51,18 @@ async def create_user(user_data: UserCreate) -> Optional[UserInDB]:
         return None
 
 
-async def get_user_by_id(user_id: str) -> Optional[UserInDB]:
+async def get_user_by_id(user_id: str , x_requried_data: Optional[bool] = False) -> Optional[UserInDB]:
     users_table = get_users_table()
     try:
-        response = users_table.get_item(Key={'user_id': user_id})
+        if x_requried_data:
+            response = users_table.get_item(Key={'user_id': user_id})
+        else:
+            # If we need to fetch more data, we can use ProjectionExpression
+            response = users_table.get_item(
+                Key={'user_id': user_id},
+                ProjectionExpression="resume_id, user_id, title, full_name, created_at, updated_at"
+            )
+
         item = response.get('Item')
         return UserInDB(**item) if item else None
     except ClientError as e:
@@ -77,6 +85,38 @@ async def get_user_by_username(username: str) -> Optional[UserInDB]:
     except ClientError as e:
         print(f"Error getting user by username '{username}' from DynamoDB: {e}")
         return None
+
+async def get_user_by_username_or_mail(identifier: str) -> Optional[UserInDB]:
+    res = None
+    users_table = get_users_table()
+    # Try by username (GSI)
+    try:
+        response = users_table.query(
+            IndexName='username-index',
+            KeyConditionExpression='username = :val',
+            ExpressionAttributeValues={':val': identifier},
+            ProjectionExpression='user_id'
+        )
+        items = response.get('Items')
+        if items:
+            res = "username"
+    except ClientError as e:
+        print(f"Error querying by username '{identifier}': {e}")
+
+    # Try by email (GSI if exists)
+    try:
+        response = users_table.query(
+            IndexName='email-index',
+            KeyConditionExpression='email = :val',
+            ExpressionAttributeValues={':val': identifier},
+            ProjectionExpression='user_id'
+        )
+        items = response.get('Items')
+        if items:
+            res = res + " and email" if res else "email"
+    except ClientError as e:
+        print(f"Error querying by email '{identifier}': {e}")
+    return res
 
 
 async def get_all_users_name_email() -> dict:
