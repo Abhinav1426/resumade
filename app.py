@@ -25,7 +25,7 @@ from utils import FileOperations, WebScraper
 
 
 
-app = FastAPI(title="Resumade.Ai")
+app = FastAPI(title="Resumade.in",version="1.0.0", description="An AI-powered resume builder and job application assistant")
 
 handler = Mangum(app)  # For AWS Lambda compatibility
 
@@ -198,10 +198,10 @@ async def upload_resume_file_and_create_for_user(
 
 @resume_router.get("/users/{user_id}/resumes", response_model=List[ResumePublic])
 async def get_list_of_user_resumes_endpoint( user_id: str = Path(..., description="The ID of the user"),x_requried_data: Optional[bool] = Header(False),current_user=Depends(auth.get_current_user)):
-    user = await crud.get_user_by_id(user_id,x_requried_data)  # Optional: check if user exists
+    user = await crud.get_user_by_id(user_id)  # Optional: check if user exists
     if not user:
         raise HTTPException(status_code=404, detail=f"User with id {user_id} not found.")
-    resumes_db_list = await crud.get_all_resumes_for_user(user_id=user_id)
+    resumes_db_list = await crud.get_all_resumes_for_user(user_id=user_id,x_requried_data=x_requried_data)
     return [ResumePublic.model_validate(r.model_dump()) for r in resumes_db_list]
 
 

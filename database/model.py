@@ -149,7 +149,7 @@ class UsersResponse(BaseModel):
 # --- Resume Models for API & DynamoDB ---
 class ResumeBase(BaseModel):
     title: str = Field(default="Untitled Resume", max_length=100)
-    resume_data: ResumeSchema # The actual JSON resume content
+    resume_data: Optional[ResumeSchema] = None # The actual JSON resume content
 
 class ResumeCreate(ResumeBase):
     pass # Inherits all fields
