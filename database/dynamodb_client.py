@@ -8,7 +8,7 @@ import os
 def get_dynamodb_resource():
     env = os.environ.get("ENV") or "local"
     if env == "local":
-        print(f"Connecting to DynamoDB Local at {settings.DYNAMODB_ENDPOINT_URL}")
+        print(f"Connecting to DynamoDB from Local at")
         return boto3.resource(
             'dynamodb',
             region_name=settings.AWS_REGION_NAME,

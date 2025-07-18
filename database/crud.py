@@ -6,6 +6,7 @@ from database.dynamodb_client import get_users_table, get_resumes_table, get_met
 from database.model import (
     UserCreate, UserInDB, ResumeCreate, ResumeUpdate, ResumeInDB, now_iso
 )
+import re
 from utils import auth
 
 
@@ -14,7 +15,7 @@ async def create_user(user_data: UserCreate) -> Optional[UserInDB]:
     users_table = get_users_table()
 
     # Check if username already exists using GSI
-    existing_user = await get_user_by_username_or_mail(user_data.username)
+    existing_user = await get_existing_user_by_username_or_mail(user_data.email,user_data.username)
     if existing_user:
         raise ValueError(f"{existing_user}' already exists.")
 
@@ -69,6 +70,37 @@ async def get_user_by_id(user_id: str , x_requried_data: Optional[bool] = False)
         print(f"Error getting user by ID {user_id} from DynamoDB: {e}")
         return None
 
+async def get_user_by_username_or_mail(identifier: str) -> Optional[UserInDB]:
+    users_table = get_users_table()
+    # Simple regex to check if identifier is an email
+    email_regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
+    if re.match(email_regex, identifier):
+        # Query by email
+        try:
+            response = users_table.query(
+                IndexName='email-index',
+                KeyConditionExpression='email = :val',
+                ExpressionAttributeValues={':val': identifier}
+            )
+            items = response.get('Items')
+            if items:
+                return UserInDB(**items[0])
+        except ClientError as e:
+            print(f"Error querying by email '{identifier}': {e}")
+    else:
+        # Query by username
+        try:
+            response = users_table.query(
+                IndexName='username-index',
+                KeyConditionExpression='username = :val',
+                ExpressionAttributeValues={':val': identifier}
+            )
+            items = response.get('Items')
+            if items:
+                return UserInDB(**items[0])
+        except ClientError as e:
+            print(f"Error querying by username '{identifier}': {e}")
+    return None
 
 async def get_user_by_username(username: str) -> Optional[UserInDB]:
     users_table = get_users_table()
@@ -86,7 +118,7 @@ async def get_user_by_username(username: str) -> Optional[UserInDB]:
         print(f"Error getting user by username '{username}' from DynamoDB: {e}")
         return None
 
-async def get_user_by_username_or_mail(identifier: str) -> Optional[UserInDB]:
+async def get_existing_user_by_username_or_mail(mail: str , username:str) -> Optional[UserInDB]:
     res = None
     users_table = get_users_table()
     # Try by username (GSI)
@@ -94,28 +126,28 @@ async def get_user_by_username_or_mail(identifier: str) -> Optional[UserInDB]:
         response = users_table.query(
             IndexName='username-index',
             KeyConditionExpression='username = :val',
-            ExpressionAttributeValues={':val': identifier},
+            ExpressionAttributeValues={':val': username},
             ProjectionExpression='user_id'
         )
         items = response.get('Items')
         if items:
             res = "username"
     except ClientError as e:
-        print(f"Error querying by username '{identifier}': {e}")
+        print(f"Error querying by username '{username}': {e}")
 
     # Try by email (GSI if exists)
     try:
         response = users_table.query(
             IndexName='email-index',
             KeyConditionExpression='email = :val',
-            ExpressionAttributeValues={':val': identifier},
+            ExpressionAttributeValues={':val': mail},
             ProjectionExpression='user_id'
         )
         items = response.get('Items')
         if items:
             res = res + " and email" if res else "email"
     except ClientError as e:
-        print(f"Error querying by email '{identifier}': {e}")
+        print(f"Error querying by email '{mail}': {e}")
     return res
 
 
