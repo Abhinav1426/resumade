@@ -2,13 +2,13 @@ import io
 import uvicorn
 from mangum import Mangum
 
-from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, Form, APIRouter, Path, Header, Query
+from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, Form, APIRouter, Path, Header, Query, Body
 from fastapi.responses import StreamingResponse
 from typing import List, Annotated, Optional
 from database.model import (
     UserPublic, JobDetailsInput, UserAppMetadata,
     ResumeCreate, ResumeUpdate, ResumePublic, ResumeSchema, ResumeInDB,
-    UserCreate as UserModelCreate, UserInDB as UserInDBModel, UsersResponse, MetadataResponse
+    UserCreate as UserModelCreate, UserInDB as UserInDBModel, UsersResponse, MetadataResponse, ResumeBase
 )
 import database.crud as crud
 from utils import auth
@@ -25,7 +25,7 @@ from utils import FileOperations, WebScraper
 
 
 
-app = FastAPI(title="Resumade.Ai")
+app = FastAPI(title="Resumade.in",version="1.0.0", description="An AI-powered resume builder and job application assistant")
 
 handler = Mangum(app)  # For AWS Lambda compatibility
 
@@ -198,10 +198,10 @@ async def upload_resume_file_and_create_for_user(
 
 @resume_router.get("/users/{user_id}/resumes", response_model=List[ResumePublic])
 async def get_list_of_user_resumes_endpoint( user_id: str = Path(..., description="The ID of the user"),x_requried_data: Optional[bool] = Header(False),current_user=Depends(auth.get_current_user)):
-    user = await crud.get_user_by_id(user_id,x_requried_data)  # Optional: check if user exists
+    user = await crud.get_user_by_id(user_id)  # Optional: check if user exists
     if not user:
         raise HTTPException(status_code=404, detail=f"User with id {user_id} not found.")
-    resumes_db_list = await crud.get_all_resumes_for_user(user_id=user_id)
+    resumes_db_list = await crud.get_all_resumes_for_user(user_id=user_id,x_requried_data=x_requried_data)
     return [ResumePublic.model_validate(r.model_dump()) for r in resumes_db_list]
 
 
@@ -220,7 +220,7 @@ async def get_one_user_resume_json_endpoint(
 # For updating an existing resume (PUT)
 @resume_router.put("/users/{user_id}/resumes/{resume_id}", response_model=ResumePublic)
 async def update_user_resume_endpoint(
-    resume_update_payload: ResumeUpdate,
+    resume_update_payload: ResumeUpdate = Body(...),  # Expecting a ResumeUpdate payload with resume_data
     user_id: str = Path(..., description="The ID of the user"),
     current_user=Depends(auth.get_current_user),
     resume_id: str = Path(..., description="The ID of the resume"),
@@ -236,7 +236,7 @@ async def update_user_resume_endpoint(
 # For creating a new resume (POST)
 @resume_router.post("/users/{user_id}/resumes", response_model=ResumePublic)
 async def create_user_resume_endpoint(
-    resume_update_payload: ResumeUpdate,
+    resume_update_payload: ResumeUpdate = Body(...),  # Expecting a ResumeUpdate payload with resume_data
     user_id: str = Path(..., description="The ID of the user"),
     current_user=Depends(auth.get_current_user),
     title: str = "Untitled Resume"
@@ -311,7 +311,7 @@ async def tailor_resume_for_job_endpoint(
 
 
 @resume_router.get("/users/{user_id}/resumes/{resume_id}/download", response_class=StreamingResponse)
-async def download_resume_as_pdf_endpoint(
+async def download_resume_as_pdf(
         user_id: str = Path(..., description="The ID of the user"),
         current_user=Depends(auth.get_current_user),
         resume_id: str = Path(..., description="The ID of the resume")
@@ -336,6 +336,32 @@ async def download_resume_as_pdf_endpoint(
         headers={"Content-Disposition": f"attachment; filename=\"{filename}\""}
     )
 
+@resume_router.post("/users/{user_id}/resumes/onfly.download", response_class=StreamingResponse)
+async def onfly_download_resume_as_pdf(
+        resume_payload:ResumeUpdate = Body(...),  # Expecting a ResumeUpdate payload with resume_data
+        user_id: str = Path(..., description="The ID of the user"),
+        current_user=Depends(auth.get_current_user),
+        
+        
+):
+    if not resume_payload or not resume_payload.resume_data:
+        raise HTTPException(status_code=404, detail="No resume data found for download")
+
+    try:
+        # TODO : Implement the actual PDF generation logic here
+        pdf_bytes: bytes = JsonToPDFBuilder().build(resume_payload.resume_data.model_dump()) or b""   # Assuming this function exists and returns bytes
+    except Exception as e:
+        print(f"PDF generation error: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to generate PDF: {str(e)}")
+
+    safe_title = "".join(c if c.isalnum() or c in (' ', '.', '-') else '_' for c in (resume_payload.title or "resume"))
+    filename = f"{safe_title.replace(' ', '_')}.pdf"
+
+    return StreamingResponse(
+        io.BytesIO(pdf_bytes),
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename=\"{filename}\""}
+    )
 
 @resume_router.delete("/users/{user_id}/resumes/{resume_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_resume_endpoint(

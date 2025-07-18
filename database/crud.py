@@ -52,18 +52,11 @@ async def create_user(user_data: UserCreate) -> Optional[UserInDB]:
         return None
 
 
-async def get_user_by_id(user_id: str , x_requried_data: Optional[bool] = False) -> Optional[UserInDB]:
+async def get_user_by_id(user_id: str ) -> Optional[UserInDB]:
     users_table = get_users_table()
     try:
-        if x_requried_data:
-            response = users_table.get_item(Key={'user_id': user_id})
-        else:
-            # If we need to fetch more data, we can use ProjectionExpression
-            response = users_table.get_item(
-                Key={'user_id': user_id},
-                ProjectionExpression="resume_id, user_id, title, full_name, created_at, updated_at"
-            )
-
+        # Always fetch all fields for UserInDB
+        response = users_table.get_item(Key={'user_id': user_id})
         item = response.get('Item')
         return UserInDB(**item) if item else None
     except ClientError as e:
@@ -208,15 +201,27 @@ async def get_resume_by_id(user_id: str, resume_id: str) -> Optional[ResumeInDB]
         return None
 
 
-async def get_all_resumes_for_user(user_id: str) -> List[ResumeInDB]:
+async def get_all_resumes_for_user(user_id: str, x_requried_data: Optional[bool] = False) -> List[ResumeInDB]:
     resumes_table = get_resumes_table()
+    
     try:
-        response = resumes_table.query(
+        if x_requried_data:
+            # If x_requried_data is True, return all fields
+            response = resumes_table.query(
             IndexName='user_id-index',
             KeyConditionExpression='user_id = :uid_val',
             ExpressionAttributeValues={':uid_val': user_id},
             ScanIndexForward=False  # Optional: to sort by sort key (resume_id) descending
         )
+        else:
+            # If x_requried_data is False, only return user_id and resume_id
+            response = resumes_table.query(
+            IndexName='user_id-index',
+            KeyConditionExpression='user_id = :uid_val',
+            ExpressionAttributeValues={':uid_val': user_id},
+            ProjectionExpression="resume_id, user_id, title, created_at, updated_at"
+            )
+        
         items = response.get('Items', [])
         return [ResumeInDB(**item) for item in items]
     except ClientError as e:
