@@ -25,7 +25,7 @@ from utils import FileOperations, WebScraper
 
 
 
-app = FastAPI(title="Resumade.in")
+app = FastAPI(title="Resumade.in",version="1.0.0", description="An AI-powered resume builder and job application assistant")
 
 handler = Mangum(app)  # For AWS Lambda compatibility
 
