@@ -56,27 +56,9 @@ class LogoutResponse(BaseModel):
 async def login_endpoint(login_request: LoginRequest):
     identifier = login_request.identifier
     password = login_request.password
-
-
-    # Use regex to check for valid email format
-    email_regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
-    if re.match(email_regex, identifier):
-        # Always support email login, fallback to manual scan if not present
-        get_user_by_email = getattr(crud, "get_user_by_email", None)
-        if get_user_by_email:
-            user = await get_user_by_email(identifier)
-        else:
-            # Fallback: scan all users and match email
-            all_users = await crud.get_all_users_name_email()
-            user = None
-            for u in all_users.get("users", []):
-                if u.get("email", "").lower() == identifier.lower():
-                    user = await crud.get_user_by_id(u["user_id"])
-                    break
-            if not user:
-                raise HTTPException(status_code=401, detail="Email not found.")
-    else:
-        user = await crud.get_user_by_username(identifier)
+    if not identifier or not password:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Identifier and password are required")
+    user = await crud.get_user_by_username_or_mail(identifier)
 
     if not user or not auth.verify_password(password, user.hashed_password):
         raise HTTPException(
