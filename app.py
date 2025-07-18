@@ -4,6 +4,10 @@ from mangum import Mangum
 
 from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, Form, APIRouter, Path, Header, Query, Body
 from fastapi.responses import StreamingResponse
+from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
+from fastapi.openapi.utils import get_openapi
+import secrets
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from typing import List, Annotated, Optional
 from database.model import (
     UserPublic, JobDetailsInput, UserAppMetadata,
@@ -25,7 +29,40 @@ from utils import FileOperations, WebScraper
 
 
 
-app = FastAPI(title="Resumade.in",version="1.0.0", description="An AI-powered resume builder and job application assistant")
+app = FastAPI(
+    title="Resumade.in",
+    version="1.0.0",
+    description="An AI-powered resume builder and job application assistant",
+    docs_url=None,
+    redoc_url=None,
+    openapi_url=None,
+)
+
+security = HTTPBasic()
+
+def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
+    correct_username = secrets.compare_digest(credentials.username, "admin")
+    correct_password = secrets.compare_digest(credentials.password, "qwert12345")
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
+
+# Hide docs endpoints from OpenAPI schema
+@app.get("/docs", include_in_schema=False)
+async def get_swagger_documentation(username: str = Depends(get_current_username)):
+    return get_swagger_ui_html(openapi_url="/openapi.json", title=app.title)
+
+@app.get("/redoc", include_in_schema=False)
+async def get_redoc_documentation(username: str = Depends(get_current_username)):
+    return get_redoc_html(openapi_url="/openapi.json", title=app.title)
+
+@app.get("/openapi.json", include_in_schema=False)
+async def openapi(username: str = Depends(get_current_username)):
+    return get_openapi(title=app.title, version=app.version, routes=app.routes)
 
 handler = Mangum(app)  # For AWS Lambda compatibility
 
