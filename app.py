@@ -12,7 +12,8 @@ from typing import List, Annotated, Optional
 from database.model import (
     UserPublic, JobDetailsInput, UserAppMetadata,
     ResumeCreate, ResumeUpdate, ResumePublic, ResumeSchema, ResumeInDB,
-    UserCreate as UserModelCreate, UserInDB as UserInDBModel, UsersResponse, MetadataResponse, ResumeBase
+    UserCreate as UserModelCreate, UserInDB as UserInDBModel, UsersResponse, MetadataResponse, ResumeBase,
+    LinkedInJobRequest, LinkedInJobResponse, JobData
 )
 import database.crud as crud
 from utils import auth
@@ -70,6 +71,7 @@ handler = Mangum(app)  # For AWS Lambda compatibility
 auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
 user_router = APIRouter(prefix="/users", tags=["Users"])
 resume_router = APIRouter(tags=["Resumes"])  # Will be nested under users
+linkedin_router = APIRouter(prefix="/linkedin", tags=["LinkedIn"])
 
 
 class LoginRequest(BaseModel):
@@ -412,5 +414,84 @@ async def delete_resume_endpoint(
     return None
 
 
+# --- LinkedIn Job Scraping Endpoints ---
+def extract_linkedin_job_id(url: str) -> Optional[str]:
+    """
+    Extract job ID from LinkedIn URLs.
+    Supports patterns like:
+    - https://www.linkedin.com/jobs/collections/recommended/?currentJobId=4253720687
+    - https://www.linkedin.com/jobs/view/4253720687
+    """
+    import re
+    
+    # Pattern 1: currentJobId parameter
+    current_job_pattern = r'currentJobId=(\d+)'
+    match = re.search(current_job_pattern, url)
+    if match:
+        return match.group(1)
+    
+    # Pattern 2: /jobs/view/{job_id}
+    view_pattern = r'/jobs/view/(\d+)'
+    match = re.search(view_pattern, url)
+    if match:
+        return match.group(1)
+    
+    return None
+
+@linkedin_router.post("/scrape-job", response_model=LinkedInJobResponse)
+async def scrape_linkedin_job_endpoint(
+    request: LinkedInJobRequest,
+    current_user=Depends(auth.get_current_user)
+):
+    """
+    Extract job ID from LinkedIn URL and scrape job details.
+    Accepts URLs like:
+    - https://www.linkedin.com/jobs/collections/recommended/?currentJobId=4253720687
+    - https://www.linkedin.com/jobs/view/4253720687
+    """
+    try:
+        # Extract job ID from the provided URL
+        job_id = extract_linkedin_job_id(request.linkedin_url)
+        if not job_id:
+            raise HTTPException(
+                status_code=400, 
+                detail="Could not extract job ID from the provided LinkedIn URL. Please ensure the URL contains a valid job ID."
+            )
+        
+        # Construct the scraping URL
+        scraping_url = f"https://www.linkedin.com/jobs/view/{job_id}"
+        
+        # Use WebScraper to get job details
+        web_scraper = WebScraper()
+        scraped_data = web_scraper.linkedin_scrape_job_details(scraping_url)
+        
+        if not scraped_data:
+            raise HTTPException(
+                status_code=404,
+                detail="Could not scrape job details from LinkedIn. The job may not exist or be accessible."
+            )
+        
+        # Convert scraped data to structured JobData model
+        job_data = JobData(**scraped_data) if isinstance(scraped_data, dict) else None
+        
+        return LinkedInJobResponse(
+            job_id=job_id,
+            job_data=job_data,
+            scraped_url=scraping_url,
+            success=True,
+            message="Job details scraped successfully"
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"LinkedIn scraping error: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to scrape LinkedIn job: {str(e)}"
+        )
+
+app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(resume_router)  # This router has paths like /users/{user_id}/resumes/...
+app.include_router(linkedin_router)
