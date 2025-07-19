@@ -185,3 +185,26 @@ class UserAppMetadata(BaseModel): # Example for user-specific app settings
     email: EmailStr
     preferences: Optional[Dict[str, Any]] = None
 
+
+# --- LinkedIn Job Scraping Models ---
+class JobData(BaseModel):
+    """Structured model for LinkedIn job data"""
+    title: Optional[str] = None
+    company: Optional[str] = None
+    location: Optional[str] = None
+    description: Optional[str] = None
+    posted_or_reposted: Optional[str] = None
+    people_clicked_apply: Optional[str] = None
+    
+    class Config:
+        extra = "allow"  # Allow additional fields that might be scraped
+
+class LinkedInJobRequest(BaseModel):
+    linkedin_url: str = Field(..., description="LinkedIn job URL to scrape")
+
+class LinkedInJobResponse(BaseModel):
+    job_id: str
+    job_data: Optional[JobData] = None
+    scraped_url: str
+    success: bool
+    message: Optional[str] = None

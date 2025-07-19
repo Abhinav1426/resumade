@@ -208,22 +208,27 @@ async def get_all_resumes_for_user(user_id: str, x_requried_data: Optional[bool]
         if x_requried_data:
             # If x_requried_data is True, return all fields
             response = resumes_table.query(
-            IndexName='user_id-index',
-            KeyConditionExpression='user_id = :uid_val',
-            ExpressionAttributeValues={':uid_val': user_id},
-            ScanIndexForward=False  # Optional: to sort by sort key (resume_id) descending
-        )
+                IndexName='user_id-index',
+                KeyConditionExpression='user_id = :uid_val',
+                ExpressionAttributeValues={':uid_val': user_id},
+                ScanIndexForward=False  # Optional: to sort by sort key (resume_id) descending
+            )
         else:
             # If x_requried_data is False, only return user_id and resume_id
             response = resumes_table.query(
-            IndexName='user_id-index',
-            KeyConditionExpression='user_id = :uid_val',
-            ExpressionAttributeValues={':uid_val': user_id},
-            ProjectionExpression="resume_id, user_id, title, created_at, updated_at"
+                IndexName='user_id-index',
+                KeyConditionExpression='user_id = :uid_val',
+                ExpressionAttributeValues={':uid_val': user_id},
+                ProjectionExpression="resume_id, user_id, title, created_at, updated_at"
             )
         
         items = response.get('Items', [])
-        return [ResumeInDB(**item) for item in items]
+        resumes = [ResumeInDB(**item) for item in items]
+        
+        # Sort by updated_at in descending order (latest first)
+        resumes.sort(key=lambda x: x.updated_at, reverse=True)
+        
+        return resumes
     except ClientError as e:
         print(f"Error getting all resumes for user {user_id}: {e}")
         return []
